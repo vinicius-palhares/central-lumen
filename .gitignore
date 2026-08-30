@@ -1,0 +1,13 @@
+# Segredos. Um token do Notion commitado dá acesso a tudo que a integração
+# enxerga, e revogar depois não desfaz o que já foi clonado.
+.env
+.env.*
+!.env.example
+
+node_modules/
+dist/
+.DS_Store
+*.log
+
+# Saída local de depuração da varredura.
+varredura-*.json

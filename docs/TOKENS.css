@@ -1,0 +1,123 @@
+/* Central Lumen — tema.
+ *
+ * Cole ESTE ARQUIVO como primeira mensagem no Lovable, pedindo apenas para
+ * aplicar como tema. Nenhum componente ainda.
+ *
+ * Paleta de severidade separada da paleta de marca de propósito. Num painel de
+ * monitoramento a cor carrega significado, e reaproveitar o azul da marca para
+ * "atenção" faz o operador aprender a ignorar o azul.
+ *
+ * Nunca use classe de cor literal do Tailwind (bg-red-500, text-gray-600).
+ * Toda cor sai de uma variável daqui.
+ */
+
+@layer base {
+  :root {
+    /* Superfícies, do fundo para a frente */
+    --fundo:            0 0% 98%;
+    --superficie:       0 0% 100%;
+    --superficie-alta:  240 20% 97%;
+    --borda:            240 6% 90%;
+    --borda-forte:      240 6% 80%;
+
+    /* Texto */
+    --texto:            240 10% 12%;
+    --texto-suave:      240 5% 42%;
+    --texto-fraco:      240 5% 58%;
+
+    /* Marca — usada em ação e navegação, nunca em estado */
+    --marca:            243 75% 58%;
+    --marca-contraste:  0 0% 100%;
+    --marca-suave:      243 75% 96%;
+
+    /* Severidade — o vocabulário de estado do painel */
+    --alta:             0 72% 48%;
+    --alta-suave:       0 86% 96%;
+    --media:            32 90% 44%;
+    --media-suave:      36 92% 95%;
+    --baixa:            240 5% 46%;
+    --baixa-suave:      240 10% 95%;
+    --ok:               152 62% 36%;
+    --ok-suave:         152 60% 95%;
+
+    /* Confiança da fonte — deliberadamente distinta de severidade.
+     * Confiança fala da FONTE; severidade fala do CASO. Um alerta grave pode
+     * vir de fonte confiável, e um alerta leve de fonte pendente de revisão.
+     * Se as duas escalas compartilhassem cor, seriam lidas como a mesma coisa. */
+    --confianca-alta:   200 80% 38%;
+    --confianca-media:  280 45% 50%;
+
+    --raio: 0.625rem;
+
+    /* Largura máxima do painel. Não é preferência estética: linha de tabela
+     * muito longa faz o olho perder a linha entre a primeira e a última coluna. */
+    --largura-painel: 88rem;
+  }
+
+  /* Escuro por preferência do sistema, a menos que o usuário tenha escolhido claro. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-tema='claro']) {
+      --fundo:            240 10% 8%;
+      --superficie:       240 8% 11%;
+      --superficie-alta:  240 8% 15%;
+      --borda:            240 6% 20%;
+      --borda-forte:      240 6% 30%;
+
+      --texto:            0 0% 96%;
+      --texto-suave:      240 5% 68%;
+      --texto-fraco:      240 5% 52%;
+
+      --marca:            243 80% 70%;
+      --marca-contraste:  240 10% 8%;
+      --marca-suave:      243 40% 18%;
+
+      --alta:             0 80% 66%;
+      --alta-suave:       0 50% 16%;
+      --media:            36 90% 60%;
+      --media-suave:      32 50% 15%;
+      --baixa:            240 5% 62%;
+      --baixa-suave:      240 6% 18%;
+      --ok:               152 55% 55%;
+      --ok-suave:         152 40% 14%;
+
+      --confianca-alta:   200 75% 62%;
+      --confianca-media:  280 55% 70%;
+    }
+  }
+
+  /* Escolha explícita do usuário vence a preferência do sistema, nos dois sentidos. */
+  :root[data-tema='escuro'] {
+    --fundo:            240 10% 8%;
+    --superficie:       240 8% 11%;
+    --superficie-alta:  240 8% 15%;
+    --borda:            240 6% 20%;
+    --borda-forte:      240 6% 30%;
+    --texto:            0 0% 96%;
+    --texto-suave:      240 5% 68%;
+    --texto-fraco:      240 5% 52%;
+    --marca:            243 80% 70%;
+    --marca-contraste:  240 10% 8%;
+    --marca-suave:      243 40% 18%;
+    --alta:             0 80% 66%;
+    --alta-suave:       0 50% 16%;
+    --media:            36 90% 60%;
+    --media-suave:      32 50% 15%;
+    --baixa:            240 5% 62%;
+    --baixa-suave:      240 6% 18%;
+    --ok:               152 55% 55%;
+    --ok-suave:         152 40% 14%;
+    --confianca-alta:   200 75% 62%;
+    --confianca-media:  280 55% 70%;
+  }
+
+  body {
+    background-color: hsl(var(--fundo));
+    color: hsl(var(--texto));
+  }
+
+  /* Números de indicador e de contagem alinham por coluna. Sem isto, a linha de
+   * KPI "dança" enquanto os valores atualizam. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

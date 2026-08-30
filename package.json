@@ -1,0 +1,18 @@
+{
+  "name": "central-lumen",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Central Inteligente de Monitoramento — integra a API do Notion e a do Gemini para consolidar indicadores e automatizar o acompanhamento de alunos.",
+  "scripts": {
+    "seed": "npm run semear-playbook && npm run gerar-alunos",
+    "gerar-alunos": "node scripts/gerar_alunos.mjs",
+    "semear-playbook": "node scripts/semear_playbook.mjs",
+    "varredura": "node scripts/varredura.mjs",
+    "varredura:secar": "node scripts/varredura.mjs --secar",
+    "testar": "node --test scripts/regras.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,37 @@
+# Agendamento da varredura.
+#
+# O cron roda de segunda a sexta às 12:00 UTC (09:00 em Brasília). Fim de semana
+# fica de fora de propósito: abrir alerta que ninguém vai ler até segunda só
+# atrasa o relógio de deduplicação do ciclo.
+#
+# workflow_dispatch fica habilitado porque a demonstração do vídeo precisa de um
+# disparo manual observável — esperar o cron não é demonstração.
+
+name: Varredura de alertas
+
+on:
+  schedule:
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      secar:
+        description: 'Só avaliar, sem gravar no Notion'
+        type: boolean
+        default: false
+
+jobs:
+  varrer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Executar varredura
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_RESPONSAVEL_ID: ${{ secrets.NOTION_RESPONSAVEL_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/varredura.mjs ${{ inputs.secar && '--secar' || '' }}
