@@ -311,7 +311,32 @@ recusa em vez de estimar, e mostra de onde tirou a recusa.
 | [01-login.png](docs/prints/01-login.png) | card de login centrado, sem cadastro aberto |
 | [08-mobile-375.png](docs/prints/08-mobile-375.png) | 375px, sem rolagem horizontal |
 | [09-perfil-bloqueado.png](docs/prints/09-perfil-bloqueado.png) | o 403: credencial válida, acesso não liberado, com saída explícita |
-| `07-notion-alertas.png` | **a capturar à mão** — a base de Alertas no Notion exige sessão do Notion, que o navegador do script não tem |
+| `07-notion-alertas.png` | **a capturar à mão** — ver abaixo |
+
+### O print que falta, e o que ele deve mostrar
+
+`07-notion-alertas.png` é a única captura que o script não faz: a base de
+Alertas exige sessão do Notion, que o navegador do script não tem.
+
+**O que enquadrar:** a base *Lumen · Alertas* em visão de tabela, com as colunas
+`Alerta`, `Tipo`, `Severidade`, `Status`, `Responsável` e `Prazo` visíveis. As
+sete linhas cabem numa tela.
+
+**O que esse print prova**, e vale ser preciso: que a automação escreve
+**registros estruturados e relacionados** num banco no-code — cada alerta com
+tipo, gravidade, prazo, dono, e relação de volta para o aluno e para a regra que
+o originou. É o requisito de persistência e o de automação, visíveis ao mesmo
+tempo.
+
+**O que ele NÃO prova:** que alguém foi notificado. A coluna `Responsável` está
+preenchida nas sete linhas, mas o Notion não dispara aviso nesta configuração
+— a causa está em [Segurança e governança](#segurança-e-governança), e o aviso
+vive no painel. Uma legenda anterior deste README dizia "com responsável
+atribuído" de um jeito que sugeria notificação. Não sugere mais.
+
+Se você abrir uma página de alerta individual em vez da tabela, apague antes os
+comentários de teste que sobraram da investigação da notificação: a API do
+Notion não permite removê-los por código.
 
 ### Como regerar
 
