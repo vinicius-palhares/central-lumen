@@ -1,17 +1,28 @@
-# Agendamento da varredura.
+# Execução da varredura pelo GitHub Actions.
 #
-# O cron roda de segunda a sexta às 12:00 UTC (09:00 em Brasília). Fim de semana
-# fica de fora de propósito: abrir alerta que ninguém vai ler até segunda só
-# atrasa o relógio de deduplicação do ciclo.
+# SEM AGENDAMENTO, e a ausência é decisão registrada.
 #
-# workflow_dispatch fica habilitado porque a demonstração do vídeo precisa de um
-# disparo manual observável — esperar o cron não é demonstração.
+# O gatilho `schedule` foi removido porque ligá-lo exigiria guardar o
+# NOTION_TOKEN nos segredos deste repositório, que é público. Esse token é um
+# Personal Access Token: ele carrega o acesso do usuário que o emitiu ao
+# workspace inteiro, e não apenas às três bases do projeto — limitação que a
+# seção 5 do documento teórico descreve em detalhe.
+#
+# Guardar uma credencial de alcance largo em mais um lugar, para ganhar um cron
+# num projeto acadêmico, é uma troca ruim. O disparo manual cobre a
+# demonstração, e a varredura roda igual pela linha de comando.
+#
+# Se um dia o PAT for trocado por uma integração interna escopada só à
+# página-raiz, a conta muda: aí basta acrescentar de volta
+#
+#   schedule:
+#     - cron: '0 12 * * 1-5'
+#
+# e configurar os três segredos.
 
 name: Varredura de alertas
 
 on:
-  schedule:
-    - cron: '0 12 * * 1-5'
   workflow_dispatch:
     inputs:
       secar:

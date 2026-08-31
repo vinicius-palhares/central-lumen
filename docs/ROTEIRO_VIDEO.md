@@ -100,10 +100,11 @@ Voltar ao painel, recarregar o perfil 1002.
 
 ### 3c. A automação (2:35 – 3:00)
 
-**Tela:** disparar o workflow no GitHub Actions, depois a base de Alertas.
+**Tela:** o terminal rodando `npm run varredura`, depois a base de Alertas.
 
-> E isso roda sem ninguém pedir. A varredura é agendada, percorre a base, aplica
-> as regras e abre alertas.
+> E isso roda sem ninguém pedir por um aluno. A varredura percorre a base
+> inteira, aplica as regras e abre alertas — cria trabalho em vez de esperar a
+> pergunta.
 >
 > Cada alerta traz duas coisas lado a lado: a conta determinística e a leitura
 > gerada pelo modelo. Se as duas divergirem, está escrito no alerta que a conta

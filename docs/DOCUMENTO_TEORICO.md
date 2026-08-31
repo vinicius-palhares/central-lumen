@@ -91,7 +91,10 @@ O teste automatizado que garante o cálculo existe porque a implementação erra
 — somar as fases e comparar com 60% — passa em todos os outros casos e falha só
 nesse.
 
-**Contra a reatividade:** a varredura roda agendada, sem ninguém pedir.
+**Contra a reatividade:** a varredura percorre a base inteira sem que ninguém
+tenha perguntado por um aluno específico. É essa varredura, e não o gatilho que
+a dispara, que inverte a iniciativa: ela cria trabalho em vez de responder a
+quem procurou.
 
 Há uma quarta decisão, sobre o papel do modelo. O Gemini poderia avaliar a
 elegibilidade: tem a regra e tem os números. Ele não avalia porque duas
@@ -221,10 +224,21 @@ qualquer visitante, com acesso a tudo que a integração enxerga.
 
 ### Agendamento
 
-GitHub Actions, cron de segunda a sexta às 12:00 UTC. Fim de semana fica de
-fora de propósito: abrir alerta que ninguém lerá até segunda só desperdiça o
-relógio de deduplicação do ciclo. Há disparo manual via `workflow_dispatch`,
-porque uma demonstração que depende de esperar o cron não é demonstração.
+A varredura roda por linha de comando ou pelo disparo manual do workflow em
+GitHub Actions. **O agendamento por cron está desligado**, e a ausência é uma
+decisão de segurança, não um item pendente.
+
+Ligá-lo exigiria guardar o token do Notion nos segredos de um repositório
+público. Sendo um Personal Access Token, ele carrega o acesso do emissor ao
+workspace inteiro — a limitação descrita na seção 5. Replicar uma credencial de
+alcance largo em mais um sistema, para ganhar execução automática num trabalho
+acadêmico, é uma troca que não se paga.
+
+O gatilho fica versionado e comentado no arquivo do workflow, com a condição
+para religá-lo escrita ao lado: trocar o PAT por uma integração interna
+escopada à página-raiz. Registrar a condição junto do código é o que faz a
+decisão sobreviver a quem vier depois; um `schedule` apagado sem explicação
+seria religado no primeiro impulso.
 
 ---
 

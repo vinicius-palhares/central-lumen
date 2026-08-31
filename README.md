@@ -173,8 +173,17 @@ precisaria embarcar o token no bundle, e bundle é público por definição.
 
 ### A automação
 
-`scripts/varredura.mjs`, agendada em GitHub Actions de segunda a sexta às 09:00
-de Brasília, e disparável à mão por `workflow_dispatch`.
+`scripts/varredura.mjs`. Roda por `npm run varredura` ou pelo disparo manual do
+workflow em GitHub Actions.
+
+**O agendamento está desligado, e a ausência é decisão registrada.** Ligar o
+`schedule` exigiria guardar o `NOTION_TOKEN` nos segredos deste repositório, que
+é público. Esse token é um Personal Access Token e carrega o acesso do emissor
+ao workspace inteiro, não só às três bases — a limitação está detalhada em
+[Segurança e governança](#segurança-e-governança). Guardar uma credencial de
+alcance largo em mais um lugar, para ganhar um cron num projeto acadêmico, é uma
+troca ruim. O gatilho está versionado e comentado no workflow, pronto para ser
+religado quando o PAT for trocado por uma integração escopada.
 
 Por aluno, avalia três situações:
 
