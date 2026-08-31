@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-31T00:00:00.000Z",
+  "title": "Design System: Central Lumen",
+  "extensions": {
+    "colorMeta": {
+      "marca": {
+        "role": "primary",
+        "displayName": "Anil Institucional",
+        "canonical": "hsl(243 75% 58%)",
+        "dark": "hsl(243 80% 70%)",
+        "tonalRamp": ["hsl(243 75% 15%)", "hsl(243 75% 26%)", "hsl(243 75% 37%)", "hsl(243 75% 48%)", "hsl(243 75% 58%)", "hsl(243 75% 70%)", "hsl(243 75% 83%)", "hsl(243 75% 95%)"]
+      },
+      "alta": {
+        "role": "secondary",
+        "displayName": "Vermelho de Urgência",
+        "canonical": "hsl(0 72% 48%)",
+        "dark": "hsl(0 80% 66%)",
+        "tonalRamp": ["hsl(0 72% 15%)", "hsl(0 72% 26%)", "hsl(0 72% 37%)", "hsl(0 72% 48%)", "hsl(0 72% 59%)", "hsl(0 72% 71%)", "hsl(0 72% 83%)", "hsl(0 72% 95%)"]
+      },
+      "media": {
+        "role": "secondary",
+        "displayName": "Âmbar de Atenção",
+        "canonical": "hsl(32 90% 44%)",
+        "dark": "hsl(36 90% 60%)",
+        "tonalRamp": ["hsl(32 90% 15%)", "hsl(32 90% 25%)", "hsl(32 90% 35%)", "hsl(32 90% 44%)", "hsl(32 90% 56%)", "hsl(32 90% 69%)", "hsl(32 90% 82%)", "hsl(32 90% 95%)"]
+      },
+      "baixa": {
+        "role": "secondary",
+        "displayName": "Cinza de Registro",
+        "canonical": "hsl(240 5% 46%)",
+        "dark": "hsl(240 5% 62%)",
+        "tonalRamp": ["hsl(240 5% 15%)", "hsl(240 5% 25%)", "hsl(240 5% 36%)", "hsl(240 5% 46%)", "hsl(240 5% 58%)", "hsl(240 5% 70%)", "hsl(240 5% 83%)", "hsl(240 5% 95%)"]
+      },
+      "ok": {
+        "role": "secondary",
+        "displayName": "Verde de Conformidade",
+        "canonical": "hsl(152 62% 36%)",
+        "dark": "hsl(152 55% 55%)",
+        "tonalRamp": ["hsl(152 62% 15%)", "hsl(152 62% 24%)", "hsl(152 62% 31%)", "hsl(152 62% 36%)", "hsl(152 62% 50%)", "hsl(152 62% 65%)", "hsl(152 62% 81%)", "hsl(152 62% 95%)"]
+      },
+      "confianca-alta": {
+        "role": "tertiary",
+        "displayName": "Ciano de Fonte Revisada",
+        "canonical": "hsl(200 80% 38%)",
+        "dark": "hsl(200 75% 62%)",
+        "tonalRamp": ["hsl(200 80% 15%)", "hsl(200 80% 24%)", "hsl(200 80% 31%)", "hsl(200 80% 38%)", "hsl(200 80% 51%)", "hsl(200 80% 66%)", "hsl(200 80% 81%)", "hsl(200 80% 95%)"]
+      },
+      "confianca-media": {
+        "role": "tertiary",
+        "displayName": "Violeta de Fonte Pendente",
+        "canonical": "hsl(280 45% 50%)",
+        "dark": "hsl(280 55% 70%)",
+        "tonalRamp": ["hsl(280 45% 15%)", "hsl(280 45% 26%)", "hsl(280 45% 38%)", "hsl(280 45% 50%)", "hsl(280 45% 61%)", "hsl(280 45% 72%)", "hsl(280 45% 84%)", "hsl(280 45% 95%)"]
+      },
+      "texto": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "hsl(240 10% 12%)",
+        "dark": "hsl(0 0% 96%)",
+        "tonalRamp": ["hsl(240 10% 12%)", "hsl(240 8% 24%)", "hsl(240 6% 36%)", "hsl(240 5% 48%)", "hsl(240 5% 60%)", "hsl(240 6% 74%)", "hsl(240 10% 88%)", "hsl(240 20% 97%)"]
+      },
+      "superficie": {
+        "role": "neutral",
+        "displayName": "Superfície",
+        "canonical": "hsl(0 0% 100%)",
+        "dark": "hsl(240 8% 11%)",
+        "tonalRamp": ["hsl(240 10% 8%)", "hsl(240 8% 11%)", "hsl(240 8% 15%)", "hsl(240 6% 20%)", "hsl(240 6% 80%)", "hsl(240 6% 90%)", "hsl(240 20% 97%)", "hsl(0 0% 100%)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Indicador", "purpose": "Os números da faixa de indicadores. Sempre tabular." },
+      "title": { "displayName": "Título", "purpose": "Título de seção e identidade no cabeçalho." },
+      "body": { "displayName": "Corpo", "purpose": "Conteúdo dos cards e leitura gerada. Medida máxima de 68ch." },
+      "label": { "displayName": "Rótulo", "purpose": "Rótulos, chips, prazos e metadados." },
+      "prova": { "displayName": "Prova", "purpose": "Exclusiva do bloco da conta determinística. Uma família monoespaçada, um lugar só." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "transicao-cor", "value": "150ms", "purpose": "Troca de fundo em botão e linha de lista. Propriedade sempre explícita, nunca `all`." },
+      { "name": "transicao-transform", "value": "150ms", "purpose": "Rotação do chevron ao expandir o card de alerta." }
+    ],
+    "breakpoints": [
+      { "name": "recuo-medio", "value": "640px" },
+      { "name": "recuo-largo", "value": "1024px" },
+      { "name": "duas-colunas", "value": "900px" },
+      { "name": "cartao-indicador", "value": "9.5rem (auto-fit, sem media query)" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão primário",
+      "kind": "button",
+      "refersTo": "botao-primario",
+      "description": "A ação da tela. No máximo um por superfície.",
+      "html": "<button class=\"ds-btn-primario\">Perguntar</button>",
+      "css": ".ds-btn-primario { background: hsl(var(--marca)); color: hsl(var(--marca-contraste)); border: none; border-radius: 0.375rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition-property: opacity, scale; transition-duration: 150ms; } .ds-btn-primario:hover { opacity: 0.9; } .ds-btn-primario:focus-visible { outline: none; box-shadow: 0 0 0 2px hsl(var(--superficie)), 0 0 0 4px hsl(var(--marca)); } .ds-btn-primario:active { scale: 0.96; } .ds-btn-primario:disabled { opacity: 0.5; cursor: default; }"
+    },
+    {
+      "name": "Botão secundário",
+      "kind": "button",
+      "refersTo": "botao-secundario",
+      "description": "Recuperação e navegação: Tentar de novo, Sair, Ver a conta.",
+      "html": "<button class=\"ds-btn-secundario\">Ver a conta<svg class=\"ds-chevron\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m6 9 6 6 6-6\"/></svg></button>",
+      "css": ".ds-btn-secundario { display: inline-flex; align-items: center; gap: 0.375rem; background: hsl(var(--superficie-alta)); color: hsl(var(--texto)); border: 1px solid hsl(var(--borda)); border-radius: 0.375rem; padding: 0.375rem 0.75rem; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition-property: background-color, scale; transition-duration: 150ms; } .ds-btn-secundario:hover { background: hsl(var(--superficie)); } .ds-btn-secundario:focus-visible { outline: 2px solid hsl(var(--marca)); outline-offset: 2px; } .ds-btn-secundario:active { scale: 0.96; } .ds-chevron { width: 1rem; height: 1rem; }"
+    },
+    {
+      "name": "Card de alerta",
+      "kind": "card",
+      "refersTo": "cartao",
+      "description": "A forma assimétrica do sistema: borda inicial de 3px na cor da severidade.",
+      "html": "<div class=\"ds-card-alerta\"><h3 class=\"ds-card-titulo\">Otávio Peixoto — Extensão negada</h3><div class=\"ds-card-chips\"><span class=\"ds-chip-tipo\">Extensão negada</span><span class=\"ds-chip-media\">Média</span><span class=\"ds-card-prazo\">Prazo 10/09/2026</span></div><p class=\"ds-card-leitura\">A coordenação não deve conceder a extensão de 30 dias, pois ele não cumpriu o piso de Pilares.</p></div>",
+      "css": ".ds-card-alerta { display: flex; flex-direction: column; gap: 0.5rem; background: hsl(var(--superficie)); border: 1px solid hsl(var(--borda)); border-inline-start: 3px solid hsl(var(--media)); border-radius: 0.625rem; padding: 1rem; } .ds-card-titulo { margin: 0; font-size: 0.875rem; font-weight: 500; color: hsl(var(--texto)); overflow-wrap: break-word; } .ds-card-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; } .ds-chip-tipo { border-radius: 0.375rem; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 500; background: hsl(var(--superficie-alta)); color: hsl(var(--texto-suave)); } .ds-chip-media { border-radius: 0.375rem; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 500; background: hsl(var(--media-suave)); color: hsl(var(--media)); } .ds-card-prazo { font-size: 0.75rem; color: hsl(var(--texto-suave)); } .ds-card-leitura { margin: 0; font-size: 0.875rem; line-height: 1.5; max-width: 68ch; color: hsl(var(--texto-suave)); }"
+    },
+    {
+      "name": "Bloco da conta",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "A evidência determinística. Única ocorrência de monoespaçado no produto, e a raridade é o que o faz ler como prova.",
+      "html": "<div class=\"ds-conta\" tabindex=\"0\" role=\"region\" aria-label=\"Conta que sustenta o alerta\"><pre class=\"ds-conta-pre\">Mentorias do CARPA: 4 de 5 — mínimo 4, cumpre\nMentorias de Pilares: 2 de 7 — mínimo 3, NÃO cumpre\nReprovado por um único critério (Mentorias de Pilares).</pre></div>",
+      "css": ".ds-conta { width: 100%; min-width: 0; overflow-x: auto; background: hsl(var(--superficie-alta)); border-radius: 0.375rem; padding: 0.75rem; } .ds-conta:focus-visible { outline: 2px solid hsl(var(--marca)); outline-offset: 2px; } .ds-conta-pre { margin: 0; white-space: pre; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.75rem; line-height: 1.5; color: hsl(var(--texto)); }"
+    },
+    {
+      "name": "Barra de fase",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Presença de UMA fase. Nunca soma nem tira média de duas: os pisos da instituição são independentes por fase, e agregar esconde a informação que decide o caso.",
+      "html": "<div class=\"ds-fase\"><div class=\"ds-fase-topo\"><span class=\"ds-fase-nome\">Pilares</span><span class=\"ds-fase-valor\">2 de 7</span></div><div class=\"ds-fase-trilho\" role=\"img\" aria-label=\"Pilares: 2 de 7\"><div class=\"ds-fase-preenchimento\" style=\"width:28.6%\"></div></div></div>",
+      "css": ".ds-fase { display: flex; flex-direction: column; gap: 0.5rem; } .ds-fase-topo { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: baseline; gap: 0.75rem; } .ds-fase-nome { font-size: 0.75rem; color: hsl(var(--texto-suave)); } .ds-fase-valor { font-variant-numeric: tabular-nums; font-size: 0.875rem; color: hsl(var(--texto)); text-align: right; } .ds-fase-trilho { height: 0.5rem; width: 100%; overflow: hidden; border-radius: 9999px; background: hsl(var(--superficie-alta)); } .ds-fase-preenchimento { height: 100%; border-radius: 9999px; background: hsl(var(--marca)); }"
+    },
+    {
+      "name": "Campo de busca",
+      "kind": "input",
+      "refersTo": "campo",
+      "description": "Ícone embutido à esquerda com o recuo compensado. Texto a 16px no celular, para o iOS não dar zoom.",
+      "html": "<div class=\"ds-busca\"><svg class=\"ds-busca-icone\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-busca-campo\" type=\"search\" placeholder=\"Buscar por nome ou e-mail\" aria-label=\"Buscar aluno\"></div>",
+      "css": ".ds-busca { position: relative; } .ds-busca-icone { position: absolute; inset-inline-start: 0.75rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; color: hsl(var(--texto-fraco)); pointer-events: none; } .ds-busca-campo { width: 100%; background: hsl(var(--superficie)); color: hsl(var(--texto)); border: 1px solid hsl(var(--borda)); border-radius: 0.375rem; padding: 0.5rem 0.75rem 0.5rem 2.25rem; font-size: 1rem; } @media (min-width: 640px) { .ds-busca-campo { font-size: 0.875rem; } } .ds-busca-campo::placeholder { color: hsl(var(--texto-fraco)); } .ds-busca-campo:focus-visible { outline: 2px solid hsl(var(--marca)); outline-offset: 2px; }"
+    },
+    {
+      "name": "Card de indicador",
+      "kind": "card",
+      "refersTo": "cartao",
+      "description": "Rótulo pequeno, número grande e tabular. O número é o maior texto do painel.",
+      "html": "<div class=\"ds-indicador\"><p class=\"ds-indicador-rotulo\">Alertas de severidade alta</p><p class=\"ds-indicador-valor ds-indicador-alta\">2</p></div>",
+      "css": ".ds-indicador { background: hsl(var(--superficie)); border: 1px solid hsl(var(--borda)); border-radius: 0.625rem; padding: 1rem; } .ds-indicador-rotulo { margin: 0; font-size: 0.75rem; color: hsl(var(--texto-suave)); } .ds-indicador-valor { margin: 0.5rem 0 0; font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 600; color: hsl(var(--texto)); } .ds-indicador-alta { color: hsl(var(--alta)); }"
+    },
+    {
+      "name": "Chip de confiança",
+      "kind": "chip",
+      "refersTo": "chip-confianca-alta",
+      "description": "Procedência da resposta. Fundo NEUTRO de propósito, para não ser confundido com um chip de severidade.",
+      "html": "<span class=\"ds-chip-confianca\">Confiança alta</span>",
+      "css": ".ds-chip-confianca { display: inline-flex; align-items: center; border-radius: 0.375rem; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 500; background: hsl(var(--superficie-alta)); color: hsl(var(--confianca-alta)); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Livro de Ocorrências",
+    "overview": "Um livro de ocorrências registra fato, hora e responsável. Não opina, não enfeita, e não pede que você acredite nele — ele mostra o registro. A Central Lumen é construída sobre a mesma promessa: cada alerta traz a conta determinística que o sustenta ao lado da leitura redigida por modelo, e o próprio alerta declara que, havendo divergência, a conta prevalece. A interface existe para tornar essa promessa visível.\n\nIsso decide quase tudo. A tipografia é neutra porque a voz é do registro, não do sistema. A cor é escassa porque, quando ela aparece, precisa significar algo. O monoespaçado aparece exatamente uma vez — no bloco da conta — e essa raridade é o que faz o bloco ler como evidência em vez de decoração.\n\nO caráter buscado é calmo, arejado e confiável. A implementação atual é mais densa do que arejada, e isso está registrado como direção e não como descrição: quando houver dúvida entre apertar e respirar numa tela nova, respire.",
+    "keyCharacteristics": [
+      "Cor é vocabulário, não enfeite. Nenhuma cor aparece sem significar estado, ação ou procedência.",
+      "Duas escalas de cor coexistem e nunca se misturam: severidade e confiança.",
+      "Ausência de dado é um estado próprio, distinto de zero, e tem tratamento visual próprio.",
+      "Números que mudam usam algarismos tabulares, sempre.",
+      "Nenhuma classe de cor literal do Tailwind. Toda cor sai de um token."
+    ],
+    "rules": [
+      { "name": "A Regra das Duas Escalas", "body": "Severidade fala do CASO; confiança fala da FONTE. As duas escalas nunca compartilham matiz. Um alerta grave apoiado em fonte revisada precisa ser distinguível de um alerta leve apoiado em fonte pendente. Teste: se você consegue confundir um chip de confiança com um chip de severidade a três metros da tela, a regra foi violada.", "section": "colors" },
+      { "name": "A Regra do Traço", "body": "Ausência de dado se escreve — em --texto-fraco, nunca 0, nunca null, nunca campo vazio. Um aluno sem turma não tem zero presenças: ele não tem presença registrada, e a diferença muda a decisão da coordenação.", "section": "colors" },
+      { "name": "A Regra do Monoespaçado", "body": "A fonte monoespaçada aparece em um lugar só: a conta determinística. Ela não é escolha estética — é o sinal de que aquele texto foi computado, não redigido.", "section": "typography" },
+      { "name": "A Regra dos Algarismos Tabulares", "body": "Todo número que muda entre renderizações usa font-variant-numeric: tabular-nums. Sem isso a faixa de indicadores dança quando os valores atualizam.", "section": "typography" },
+      { "name": "A Regra da Quebra pelo Conteúdo", "body": "Os pontos de quebra vêm de onde o conteúdo deixa de caber, nunca de preset de aparelho. Se você escrever md: ou lg: numa tela nova, justifique com o conteúdo.", "section": "layout" },
+      { "name": "A Regra do Dobro", "body": "O espaço entre grupos é no mínimo o dobro do espaço dentro do grupo. Agrupe por espaço, não por linha divisória.", "section": "layout" }
+    ],
+    "dos": [
+      "Do tirar toda cor de um token de src/styles.css.",
+      "Do manter as duas escalas de cor separadas por matiz.",
+      "Do escrever ausência como — em --texto-fraco, e barra vazia rotulada.",
+      "Do aplicar .tabular em qualquer número que mude.",
+      "Do derivar breakpoint do conteúdo, e preferir auto-fit a media query.",
+      "Do dar ao espaço entre grupos ao menos o dobro do espaço interno.",
+      "Do verificar toda mudança de cor nos dois temas."
+    ],
+    "donts": [
+      "Don't usar classe de cor literal do Tailwind (bg-red-500, text-gray-600).",
+      "Don't usar o anil para comunicar estado, nem cor de severidade para ação.",
+      "Don't usar monoespaçado fora do bloco da conta.",
+      "Don't renderizar 0 onde o dado é ausente, nem null, nem NaN.",
+      "Don't somar ou tirar média das fases de presença numa barra única.",
+      "Don't truncar nome de pessoa com reticências: deixe quebrar em duas linhas.",
+      "Don't remover o anel de foco sem substituir por um anel visível equivalente.",
+      "Don't escrever transition: all."
+    ]
+  }
+}
