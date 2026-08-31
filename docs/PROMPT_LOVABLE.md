@@ -40,12 +40,12 @@ Ao sair, supabase.auth.signOut() e volta para /login.
 === API ===
 
 Endpoint único, sempre POST:
-  https://<SEU-PROJECT-REF>.supabase.co/functions/v1/painel
+  https://xyfyzghiajonvyrocqno.supabase.co/functions/v1/painel
 
 Headers em toda chamada:
   Content-Type: application/json
   Authorization: Bearer <access_token da sessão do Supabase>
-  apikey: <SUA-ANON-KEY>
+  apikey: sb_publishable_WP1XL-orbytZNRFYGC7N1Q_o4R4jDI4
 
 O access_token sai de supabase.auth.getSession(). Se a API responder 401,
 derrube a sessão e mande para /login. Se responder 403, mostre a mensagem
@@ -120,8 +120,12 @@ Ordem vertical da página, e ela reflete importância, não conveniência:
    perfil e o botão Sair. Fundo hsl(var(--superficie)), borda inferior de 1px.
    O cabeçalho flutua sobre o conteúdo, não empurra: use position sticky.
 
-2. FAIXA DE INDICADORES. Sete números: Alunos ativos, Acesso vencendo (30d),
-   Acesso vencido, Sem turma, Alertas abertos, Alertas de severidade alta.
+2. FAIXA DE INDICADORES. Seis cards, nesta ordem: Alunos ativos, Acesso
+   vencendo (30d), Acesso vencido, Sem turma, Alertas abertos, Alertas de
+   severidade alta.
+   O sétimo campo, alunosTotal, NÃO ganha card próprio: ele aparece como
+   denominador no card de Alunos ativos, no formato "35 de 40". Um número
+   sozinho de "total" não responde a nenhuma pergunta da coordenação.
    Grade com grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)).
    NÃO use breakpoints de 768/1024 aqui: a quebra tem que vir do ponto em que
    o card deixa de caber, e o auto-fit resolve isso sozinho.

@@ -261,18 +261,29 @@ não dá acesso; o acesso vem do token.
 ### Deploy da Edge Function
 
 ```bash
-npx supabase functions deploy painel --project-ref <seu-project-ref>
+npx supabase functions deploy painel --project-ref <seu-project-ref> --no-verify-jwt
 ```
 
+`--no-verify-jwt` é obrigatório, e não é afrouxamento. A validação do JWT
+acontece **dentro** da função, porque o `verify_jwt` da plataforma devolve 401
+genérico e não distingue "credencial inválida" de "perfil não liberado". Sem a
+distinção, o cliente manda o usuário não liberado para a tela de login num laço
+que nunca resolve.
+
 Os segredos `NOTION_TOKEN`, `GEMINI_API_KEY` e `GEMINI_MODEL` são configurados
-no painel do Supabase, em Edge Functions.
+no painel do Supabase, em Edge Functions. Faltando um deles, a função responde
+`500` **nomeando a variável ausente** — o único caso em que ela abre mão da
+mensagem genérica de erro, porque um 500 mudo deixa quem fez o deploy sem pista.
 
 ### Liberar um usuário
 
-Cadastro não é aberto. Após criar o usuário no painel de Authentication:
+Cadastro não é aberto. Ao criar o usuário no painel de Authentication, o gatilho
+já insere a linha em `perfis` com `liberado = false`. Autorizar é um ato
+deliberado e separado:
 
 ```sql
-update perfis set liberado = true where id = '<uuid do usuário>';
+update perfis set nome = 'Nome da Pessoa', liberado = true
+ where id = '<uuid do usuário>';
 ```
 
 ### Agendamento

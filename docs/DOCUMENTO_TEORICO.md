@@ -250,6 +250,29 @@ Erros retornam mensagem genérica ao cliente. O corpo de erro do Notion nomeia
 propriedades e identificadores internos, e isso não é informação que o navegador
 precisa.
 
+### Verificação, não afirmação
+
+As garantias acima foram exercitadas contra o ambiente real, e não só
+projetadas. Com um JWT de usuário legítimo, tentando contornar a Edge Function
+e falar direto com o PostgREST:
+
+| Alvo | Resultado | Leitura |
+|---|---|---|
+| `acessos` | `200 []` | RLS sem política: zero linhas visíveis |
+| `perfis` | `200` com a própria linha | a política faz o que promete |
+| `alunos` (tabela do Lumen) | `403` | sem grant para o papel autenticado |
+| `rpc/criar_perfil` | `404` | a revogação de EXECUTE removeu a função da API |
+
+O caso de `acessos` merece precisão: a resposta é `200` com lista vazia, não
+`403`. Não é erro — é como RLS funciona. A tabela existe, a requisição é
+válida, e não há nenhuma linha que o usuário tenha direito de ver. O efeito
+prático é o desejado, e descrevê-lo como "acesso negado" seria impreciso.
+
+A sequência de autorização também foi verificada na ordem: usuário recém-criado
+recebeu `403` com a mensagem própria; depois do `update` de liberação, `200`.
+A mesma credencial, resultados diferentes — que é a demonstração de que
+autenticação e autorização são camadas separadas de fato, e não só no texto.
+
 ### O que a aplicação não faz
 
 Não envia e-mail, não expõe endpoint de escrita ao cliente, não aceita
