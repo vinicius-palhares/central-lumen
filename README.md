@@ -6,7 +6,8 @@ instituição sobre os dados e abrir alertas acionáveis automaticamente.
 
 Trabalho da disciplina de Integração de APIs — UniFECAF.
 
-**Aplicação:** https://lumen-school-pulse.lovable.app
+**Aplicação:** https://lumen-school-pulse.lovable.app — o acesso exige login,
+ver [Como acessar](#como-acessar).
 
 > Projeto acadêmico. O **Instituto Lumen** é uma instituição fictícia. Os 40
 > perfis de aluno são sintéticos, gerados por script versionado com semente
@@ -342,6 +343,57 @@ esperava pelo texto "Avaliação da extensão" e capturou a tela em
 "Carregando…": a descrição do painel contém essa frase e já existe no
 esqueleto, então a espera resolvia na hora. Agora espera pelo título virar o
 nome do aluno.
+
+## Como acessar
+
+**Aplicação:** https://lumen-school-pulse.lovable.app
+
+O painel exige login, e **não há cadastro aberto**. Isso é decisão de desenho,
+não obstáculo: autenticação e autorização são camadas separadas, e uma conta
+recém-criada nasce com `liberado = false` e recebe `403` até que a coordenação a
+libere. Ver [Segurança e governança](#segurança-e-governança).
+
+Para avaliação existe uma conta de leitura já liberada. **A credencial vai junto
+da entrega, não neste arquivo** — um repositório público é lido por muita gente
+que não precisa entrar, e o avaliador procura a credencial onde entregou o
+trabalho, não no README.
+
+### O que essa conta alcança, medido
+
+Não é promessa, é teste. Com um JWT válido dessa conta, indo **direto ao
+PostgREST** para contornar a Edge Function:
+
+| Alvo | Resposta |
+|---|---|
+| `painel` — resumo, alunos, aluno, alertas, perguntar | `200` — é o objetivo |
+| `acessos` (trilha de auditoria) | `200 []` — RLS sem política: zero linhas |
+| `perfis` | `200` — só a própria linha |
+| `alunos`, `chunks`, `fontes`, `mensagens`, `conversas`, `testes_guardrail`, `anonimizacao` | `403` |
+| `PATCH perfis` (tentar se auto-liberar) | `400` |
+
+As sete tabelas em `403` são de **outro projeto** que compartilha o mesmo
+Supabase. Era o risco real de reaproveitar a infraestrutura, e ele não se
+concretiza: o papel `authenticated` não tem privilégio sobre elas.
+
+O que a conta pode fazer de indesejado é consumir cota do Gemini pelo campo de
+pergunta. É custo, não vazamento, e some quando a avaliação termina:
+
+```sql
+update perfis set liberado = false where nome = 'Avaliação';
+```
+
+### O que este repositório expõe, e o que não
+
+Público por desenho: a chave publicável do Supabase — que vive no bundle do
+navegador de qualquer jeito —, o identificador do projeto e os IDs das três
+bases do Notion. **Conhecer o ID de uma base não dá acesso a ela**; o acesso vem
+do token.
+
+**O token do Notion e a chave do Gemini nunca chegam ao navegador.** Vivem
+apenas como segredo da Edge Function, e é essa a razão de a função existir. Nem
+o estado atual nem o histórico do repositório contêm qualquer segredo — o
+histórico importa tanto quanto o estado, porque um `.env` commitado e removido
+depois continua lá.
 
 ## Como executar
 
