@@ -360,42 +360,34 @@ um efeito e renderize o estado neutro no primeiro passo.
 Não silencie o aviso com suppressHydrationWarning sem antes achar a causa.
 ```
 
-### 10. Parar o laço de refetch
+### 10. Verificar que não há atualização automática
 
-Medido na trilha de auditoria do banco, com o painel aberto e ninguém mexendo:
-**11 a 12 chamadas por minuto** de cada uma das rotas `resumo`, `alertas` e
-`alunos`, sustentadas por minutos. Cerca de 36 invocações da Edge Function por
-minuto, cada uma consultando três bases do Notion.
+Uma rajada de 30 a 36 chamadas por minuto apareceu na trilha de auditoria
+durante uma sessão de edição no Lovable. A hipótese inicial foi um laço de
+refetch no painel; **não se confirmou** — a rajada parou sozinha, o que um
+temporizador não faz, e o código-fonte não tem `refetchInterval` nem
+`setInterval`. A causa provável foi a prévia recarregando a cada reconstrução.
 
-Três consequências, e a terceira é a pior:
-
-1. O Notion limita a cerca de 3 requisições por segundo. Esse ritmo encosta no
-   teto e passa a receber 429.
-2. Cada invocação é custo de Edge Function.
-3. A trilha de auditoria enche de ruído. Ela existe para responder "quem viu o
-   quê"; com 200 linhas de polling automático por sessão, ela deixa de
-   responder — o registro de uma consulta deliberada some no meio.
+Como o custo de um laço real seria alto — o Notion limita a cerca de 3
+requisições por segundo, e a trilha de auditoria perde o sentido afogada em
+ruído — vale fixar a garantia em vez de confiar na ausência.
 
 ```
-O painel está refazendo as chamadas de resumo, alertas e alunos a cada poucos
-segundos, sem ninguém pedir. Isso não foi solicitado. Remova.
+Confirme e mantenha, nas queries do painel:
 
-Configure as queries assim:
-- Sem refetchInterval. Nenhuma rota tem atualização automática por tempo.
+- Nenhuma rota tem refetchInterval. Nenhuma tem setInterval.
 - refetchOnWindowFocus: false.
-- staleTime alto (5 minutos) para resumo, alertas e alunos.
-- A query de busca de aluno tem debounce de 300ms e não dispara com a busca
-  vazia mudando para vazia.
+- staleTime de 5 minutos em resumo, alertas e alunos.
+- A busca de aluno tem debounce de 300ms.
+- Nenhuma queryKey contém objeto ou array criado inline no render — chave
+  instável invalida o cache a cada render e produz um laço.
 
-Confirme também que nenhuma queryKey é reconstruída a cada render — chave que
-contém objeto ou array literal criado inline invalida o cache toda vez e
-produz exatamente esse laço.
-
-A atualização passa a ser explícita: um botão "Atualizar" no cabeçalho, que
-invalida as três queries de uma vez. Um painel de monitoramento operacional é
-consultado, não observado em tempo real — o dado de origem muda quando a
-varredura roda, uma vez por dia.
+A atualização é explícita: um botão "Atualizar" no cabeçalho invalida as três
+queries de uma vez. Um painel de monitoramento operacional é consultado, não
+observado em tempo real — o dado de origem muda quando a varredura roda, uma
+vez por dia.
 ```
 
-Depois de aplicar, confirme com o painel aberto e parado por dois minutos: o
-número de chamadas tem que ficar em zero.
+**A verificação, que é a parte que importa:** deixe o painel aberto, logado e
+parado por dois minutos. A contagem de novas chamadas tem que ser zero. Sem
+medir, "não tem polling" é suposição.

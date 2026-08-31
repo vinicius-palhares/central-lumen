@@ -506,24 +506,32 @@ auditado não lê nem edita a própria trilha. O registro acontece **depois** do
 sucesso da operação: registrar antes produziria log de consulta que falhou, e
 "quem viu o quê" deixaria de ser verdade.
 
-**Ruído automático degrada a trilha.** A primeira versão da interface refazia as
-chamadas a cada poucos segundos por conta própria — 11 a 12 por minuto de cada
-rota, com o painel aberto e ninguém mexendo. Em pouco mais de dez minutos a
-tabela acumulou 205 registros, dos quais cerca de 17 correspondiam a uma ação
-humana.
+**Ruído automático degrada a trilha, e a trilha mostrou isso sobre si mesma.**
+Durante uma sessão de edição da interface, a tabela registrou uma rajada de 30 a
+36 chamadas por minuto, sustentada por cinco minutos — contra as poucas unidades
+por minuto que uma pessoa usando o painel produz. Em pouco mais de dez minutos a
+tabela passou de dezenas para 205 registros.
 
-O efeito óbvio é custo: cada chamada consulta três bases do Notion, e o Notion
-limita a cerca de três requisições por segundo. O efeito grave é outro. Uma
-trilha de auditoria existe para responder *quem viu o quê*; afogada em polling
-automático, ela para de responder, porque o registro de uma consulta deliberada
-fica indistinguível do ruído em volta.
+A primeira leitura foi de que a interface tinha um laço de atualização
+automática. **Estava errada, e o modo como caiu vale mais que o achado.** Duas
+evidências a derrubaram: a rajada *parou sozinha* — um temporizador não para
+enquanto a aba está aberta — e o código-fonte da interface não tem
+`refetchInterval`, `setInterval`, nem chave de consulta instável. A causa
+provável é o ambiente de edição recarregando a prévia a cada reconstrução.
 
-A correção é no cliente, não no servidor — filtrar o ruído na gravação
-esconderia o problema em vez de resolvê-lo, e ainda daria à trilha uma seleção
-que ninguém auditou. A atualização passou a ser explícita, por botão. É a
-escolha certa também pelo domínio: o dado de origem muda quando a varredura
-roda, uma vez por dia, e um painel que se atualiza a cada cinco segundos sobre
-dado diário não mostra nada de novo.
+O que fica estabelecido, e é suficiente para a decisão de projeto: **volume
+automático de qualquer origem degrada a trilha de auditoria.** Ela existe para
+responder *quem viu o quê*; afogada em centenas de chamadas que ninguém pediu,
+o registro de uma consulta deliberada fica indistinguível do ruído em volta.
+
+A resposta certa não é filtrar na gravação — isso esconderia o volume em vez de
+explicá-lo, e daria à trilha uma seleção que ninguém auditou. É manter a
+atualização explícita no cliente e **medir**: com o painel aberto e parado, a
+contagem tem que ficar em zero. A verificação está no `docs/PROMPT_LOVABLE.md`.
+
+Registro do erro: a hipótese do laço foi publicada antes de eu ler o
+código-fonte da interface, que só entrou no repositório depois. Era uma
+inferência a partir do efeito, apresentada como diagnóstico.
 
 ### Ética da automação
 
