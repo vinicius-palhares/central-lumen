@@ -437,6 +437,25 @@ auditado não lê nem edita a própria trilha. O registro acontece **depois** do
 sucesso da operação: registrar antes produziria log de consulta que falhou, e
 "quem viu o quê" deixaria de ser verdade.
 
+**Ruído automático degrada a trilha.** A primeira versão da interface refazia as
+chamadas a cada poucos segundos por conta própria — 11 a 12 por minuto de cada
+rota, com o painel aberto e ninguém mexendo. Em pouco mais de dez minutos a
+tabela acumulou 205 registros, dos quais cerca de 17 correspondiam a uma ação
+humana.
+
+O efeito óbvio é custo: cada chamada consulta três bases do Notion, e o Notion
+limita a cerca de três requisições por segundo. O efeito grave é outro. Uma
+trilha de auditoria existe para responder *quem viu o quê*; afogada em polling
+automático, ela para de responder, porque o registro de uma consulta deliberada
+fica indistinguível do ruído em volta.
+
+A correção é no cliente, não no servidor — filtrar o ruído na gravação
+esconderia o problema em vez de resolvê-lo, e ainda daria à trilha uma seleção
+que ninguém auditou. A atualização passou a ser explícita, por botão. É a
+escolha certa também pelo domínio: o dado de origem muda quando a varredura
+roda, uma vez por dia, e um painel que se atualiza a cada cinco segundos sobre
+dado diário não mostra nada de novo.
+
 ### Ética da automação
 
 **Alerta não é decisão.** Cada alerta carrega a conta determinística, a leitura
