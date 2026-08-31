@@ -190,6 +190,10 @@ O terceiro é o mais forte se você tiver tempo de mostrar o log na tela.
 - [ ] Zoom do navegador em 110–125%: o vídeo será visto em tela pequena.
 - [ ] Notificações do sistema desligadas.
 - [ ] Nenhuma aba com dado real da empresa aberta ao lado.
+- [ ] **Barra lateral do Notion recolhida**, se aparecer alguma tela dele. A
+      caixa de entrada mostra avisos de testes antigos, e um deles diz
+      "Central Lumen mencionou você" — o que contradiz, na tela, o que o
+      documento afirma sobre notificação.
 
 ## Depois de gravar
 
