@@ -334,9 +334,8 @@ preenchida nas sete linhas, mas o Notion não dispara aviso nesta configuração
 vive no painel. Uma legenda anterior deste README dizia "com responsável
 atribuído" de um jeito que sugeria notificação. Não sugere mais.
 
-Se você abrir uma página de alerta individual em vez da tabela, apague antes os
-comentários de teste que sobraram da investigação da notificação: a API do
-Notion não permite removê-los por código.
+As sete páginas de alerta estão sem comentário residual, então tanto a tabela
+quanto uma página individual servem para a captura.
 
 ### Como regerar
 
