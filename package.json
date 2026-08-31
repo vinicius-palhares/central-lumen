@@ -13,7 +13,8 @@
     "testar": "node --test scripts/regras.test.mjs scripts/alertas.test.mjs",
     "testar:consultas": "node scripts/testar_consultas.mjs",
     "testar:tudo": "npm run testar && node scripts/testar_consultas.mjs --com-gemini",
-    "prints": "node scripts/prints.mjs"
+    "prints": "node scripts/prints.mjs",
+    "verificar:novos": "node scripts/verificar_novos.mjs"
   },
   "engines": {
     "node": ">=20"

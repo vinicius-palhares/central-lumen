@@ -219,6 +219,12 @@ data da varredura, que informa, e omite a marcação, que não informa.
 A regra vive no servidor, e não na interface, porque a pergunta *"isto distingue
 alguma coisa?"* é semântica e se responde onde os dados estão.
 
+Os dois ramos estão verificados na interface publicada. O positivo não é
+alcançável com os dados atuais — enquanto todos os alertas vierem da mesma
+varredura, a API responde `destacarNovos: false` e o chip nunca aparece — então
+`npm run verificar:novos` intercepta a resposta no navegador e força o caso.
+Nada é gravado: a alteração vive só na memória da página.
+
 ---
 
 ## Segurança e governança
@@ -339,6 +345,7 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 | `npm run varredura:secar` | roda a avaliação e imprime, **sem** gravar e sem chamar o Gemini |
 | `npm run varredura` | a automação completa |
 | `npm run prints` | regera as capturas de `docs/prints/`, sem usar senha |
+| `npm run verificar:novos` | confere os dois ramos da marcação de novos na interface publicada |
 | `npm run testar:consultas` | camada de dados do painel contra o Notion real |
 | `npm run testar:tudo` | as duas baterias, incluindo as rotas do Gemini |
 
