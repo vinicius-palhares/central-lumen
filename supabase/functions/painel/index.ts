@@ -17,8 +17,13 @@
  * propriedade do Notion apareceria em produção como campo vazio. Lá, o mesmo
  * código roda no Node contra o Notion real antes de qualquer deploy.
  *
+ * `verify_jwt` fica DESLIGADO na plataforma e a validação é feita aqui dentro,
+ * de propósito: o verify_jwt nativo devolve 401 genérico e não distingue
+ * "credencial inválida" de "perfil não liberado". A distinção é funcional, não
+ * cosmética — ver o 403 abaixo.
+ *
  * Deploy:
- *   npx supabase functions deploy painel --project-ref <ref>
+ *   npx supabase functions deploy painel --project-ref <ref> --no-verify-jwt
  *
  * Segredos, no painel do Supabase em Edge Functions:
  *   NOTION_TOKEN, GEMINI_API_KEY, GEMINI_MODEL
@@ -40,12 +45,45 @@ const SERVICE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const admin = createClient(SUPABASE_URL, SERVICE, { auth: { persistSession: false } })
 
-const consultas = criarConsultas({
-  notion: new Notion(Deno.env.get('NOTION_TOKEN')!),
-  bases: BASES,
-  geminiKey: Deno.env.get('GEMINI_API_KEY')!,
-  modelo: Deno.env.get('GEMINI_MODEL') ?? 'gemini-3.6-flash',
-})
+/**
+ * Inicialização preguiçosa das consultas.
+ *
+ * A versão anterior construía o cliente do Notion no escopo do módulo. Com o
+ * segredo `NOTION_TOKEN` ausente, o construtor lançava durante o carregamento
+ * e a função inteira morria: TODA requisição virava `WORKER_ERROR`, incluindo
+ * a que só precisaria devolver 401. Um segredo faltando derrubava até o
+ * caminho que não depende dele, e a mensagem não dizia qual segredo era.
+ *
+ * Agora a construção acontece na primeira requisição que realmente precisa
+ * dela, o erro nomeia a variável que falta, e as camadas de autenticação
+ * continuam funcionando e testáveis sem nenhum segredo configurado.
+ */
+let _consultas: ReturnType<typeof criarConsultas> | null = null
+
+function obterConsultas() {
+  if (_consultas) return _consultas
+
+  const token = Deno.env.get('NOTION_TOKEN')
+  const gemini = Deno.env.get('GEMINI_API_KEY')
+  const faltando = [
+    !token && 'NOTION_TOKEN',
+    !gemini && 'GEMINI_API_KEY',
+  ].filter(Boolean)
+
+  if (faltando.length) {
+    throw new ErroDeConfiguracao(`Segredos ausentes na Edge Function: ${faltando.join(', ')}`)
+  }
+
+  _consultas = criarConsultas({
+    notion: new Notion(token!),
+    bases: BASES,
+    geminiKey: gemini!,
+    modelo: Deno.env.get('GEMINI_MODEL') ?? 'gemini-3.6-flash',
+  })
+  return _consultas
+}
+
+class ErroDeConfiguracao extends Error {}
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -61,11 +99,11 @@ const json = (corpo: unknown, status = 200) =>
 
 // Mapa fechado. Ação fora dele devolve 400 antes de tocar em qualquer dado.
 const ROTAS: Record<string, (args: Record<string, unknown>) => Promise<unknown>> = {
-  resumo: () => consultas.resumo(),
-  alunos: (a) => consultas.listarAlunos(a),
-  aluno: (a) => consultas.detalharAluno(a as { alunoId: number }),
-  alertas: () => consultas.listarAlertas(),
-  perguntar: (a) => consultas.perguntar(a as { texto: string }),
+  resumo: () => obterConsultas().resumo(),
+  alunos: (a) => obterConsultas().listarAlunos(a),
+  aluno: (a) => obterConsultas().detalharAluno(a as { alunoId: number }),
+  alertas: () => obterConsultas().listarAlertas(),
+  perguntar: (a) => obterConsultas().perguntar(a as { texto: string }),
 }
 
 Deno.serve(async (req) => {
@@ -105,7 +143,16 @@ Deno.serve(async (req) => {
     return json({ perfil: perfil.nome, ...(resultado as object) })
   } catch (e) {
     console.error(e)
-    // Mensagem genérica ao cliente. O corpo de erro do Notion nomeia
+
+    // Erro de configuração é a única exceção à mensagem genérica. Ele não
+    // vaza dado nenhum — nomeia uma variável de ambiente que não foi definida
+    // — e sem ele quem faz o deploy fica com um 500 mudo, que foi exatamente
+    // como este bug se manifestou da primeira vez.
+    if (e instanceof ErroDeConfiguracao) {
+      return json({ erro: e.message }, 500)
+    }
+
+    // Nos demais casos, mensagem genérica. O corpo de erro do Notion nomeia
     // propriedades e identificadores internos, e isso não é informação que o
     // navegador precisa.
     return json({ erro: 'Falha ao processar a requisição.' }, 500)

@@ -15,7 +15,7 @@
 -- Existir em auth.users prova identidade, não autorização. Um convite aceito
 -- por engano, ou um cadastro aberto por descuido, cria usuário autenticado.
 -- A liberação passa por esta tabela, que só o service role escreve.
-create table perfis (
+create table if not exists perfis (
   id         uuid primary key references auth.users(id) on delete cascade,
   nome       text not null,
   liberado   boolean not null default false,
@@ -32,7 +32,8 @@ alter table perfis enable row level security;
 -- O usuário lê o próprio perfil e nada além. Sem esta política a tabela ficaria
 -- inacessível pelo cliente, o que é seguro mas impede a tela dizer quem está
 -- logado sem passar pela Edge Function.
-create policy "perfil próprio, leitura"
+drop policy if exists "perfil proprio, leitura" on perfis;
+create policy "perfil proprio, leitura"
   on perfis for select
   using (auth.uid() = id);
 
@@ -43,7 +44,7 @@ create policy "perfil próprio, leitura"
 -- Auditoria
 -- ─────────────────────────────────────────────────────────────────
 
-create table acessos (
+create table if not exists acessos (
   id         bigserial primary key,
   usuario_id uuid references auth.users(id) on delete set null,
   acao       text not null,
@@ -57,8 +58,8 @@ comment on table acessos is
   'nunca o conteúdo devolvido, que duplicaria o dado no log e alargaria a '
   'superfície que a minimização tenta reduzir.';
 
-create index on acessos (usuario_id, em desc);
-create index on acessos (em desc);
+create index if not exists acessos_usuario_em on acessos (usuario_id, em desc);
+create index if not exists acessos_em on acessos (em desc);
 
 alter table acessos enable row level security;
 
@@ -92,6 +93,7 @@ begin
 end;
 $$;
 
+drop trigger if exists ao_criar_usuario on auth.users;
 create trigger ao_criar_usuario
   after insert on auth.users
   for each row execute function public.criar_perfil();
