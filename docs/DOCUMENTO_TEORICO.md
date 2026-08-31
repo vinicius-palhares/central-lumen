@@ -72,11 +72,23 @@ no texto, o sistema usa um padrão e **marca isso na conta**, para que um alerta
 sustentado por padrão em vez de por texto seja visivelmente mais frouxo.
 
 **Contra a intuição de média:** a avaliação é determinística e mantém os
-critérios separados. A saída registra a conta literal — "CARPA: 4 de 5 —
-mínimo 4, cumpre / Pilares: 2 de 7 — mínimo 3, NÃO cumpre" — e conclui
-"reprovado por critério isolado; os pisos são independentes, não se compensam".
-O teste automatizado que garante isso existe porque a implementação errada —
-somar as fases e comparar com 60% — passa em todos os outros casos e falha só
+critérios separados. A saída registra a conta literal e o veredito:
+
+```
+Mentorias do CARPA: 4 de 5 — mínimo 4, cumpre
+Mentorias de Pilares: 2 de 7 — mínimo 3, NÃO cumpre
+Módulos faltantes: 2 — no máximo 2, cumpre
+Reprovado por um único critério (Mentorias de Pilares) — os pisos são
+independentes e não se compensam entre si.
+```
+
+O veredito conta quantos critérios falharam em vez de usar frase fixa. "Um
+único critério" é o argumento contra o "mas ele está em 50%, quase lá"; aplicado
+a um aluno que falhou em três, descreveria mal a situação e gastaria, no caso
+banal, a força que o argumento precisa ter no caso limítrofe.
+
+O teste automatizado que garante o cálculo existe porque a implementação errada
+— somar as fases e comparar com 60% — passa em todos os outros casos e falha só
 nesse.
 
 **Contra a reatividade:** a varredura roda agendada, sem ninguém pedir.
@@ -290,6 +302,34 @@ produção e nunca em teste. Texto gerado é recortado; regra do Playbook é
 **partida em vários blocos**, nunca truncada, porque truncar apagaria em
 silêncio o final da regra, que costuma ser justamente a exceção.
 
+**Truncamento não é sucesso.** A primeira execução real da varredura gravou
+sete alertas cujas leituras terminavam no meio da frase — *"A coordenação não
+deve conceder a extensão gratuita de 30 dias de"*. A causa não era o limite do
+Notion. O `maxOutputTokens` do Gemini é **compartilhado com o raciocínio
+interno** do modelo, que neste caso consumiu 383 dos 400 tokens do orçamento e
+deixou 13 para a resposta:
+
+```
+finishReason: MAX_TOKENS
+thoughtsTokenCount: 383    candidatesTokenCount: 13
+```
+
+Duas correções, e a segunda importa mais que a primeira. A primeira foi
+aumentar o orçamento — desligar o raciocínio via `thinkingConfig.thinkingBudget:
+0` foi testado e devolve resposta vazia neste modelo, então não é alternativa.
+
+A segunda foi passar a **tratar `finishReason` diferente de `STOP` como
+falha**. O código original lia o texto e, encontrando string não vazia,
+considerava a geração bem-sucedida. Meia frase é pior que nenhuma frase num
+campo que a coordenação lê como orientação, porque parece completa — e o
+alerta ia para o Notion sem nenhum sinal de que faltava conteúdo. A degradação
+declarada — *"(leitura não gerada — consulte a conta que sustenta o alerta)"* —
+é honesta; a truncada não é.
+
+O episódio reforça a decisão de arquitetura da seção 2: a conta determinística
+estava correta nos sete alertas, porque não depende do modelo. Só a redação
+falhou.
+
 ### Dados sintéticos verificáveis
 
 Gerados por script versionado, com PRNG de semente fixa. O script é público
@@ -405,7 +445,7 @@ consulta, e estimar seria inventar — sobre dinheiro, para quem tem contrato.
 
 ## Anexo — bateria de testes do motor de regras
 
-`npm run testar`, sem rede e sem credencial. Quinze casos, dos quais o
+`npm run testar`, sem rede e sem credencial. Dezesseis casos, dos quais o
 determinante é o seguinte:
 
 ```
@@ -417,4 +457,4 @@ nega por piso isolado, mesmo com a soma das fases acima de 60%
 Esse caso existe porque a implementação errada — somar as duas fases e comparar
 com 60% — passa em todos os outros e falha só nele.
 
-Última execução: 15 de 15.
+Última execução: 16 de 16.

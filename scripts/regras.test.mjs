@@ -160,3 +160,21 @@ test('o perfil 1002 é negado pelo texto real da regra', async () => {
   assert.equal(v.reprovados.length, 1)
   assert.equal(v.reprovados[0].nome, 'Mentorias de Pilares')
 })
+
+test('o veredito distingue um critério reprovado de vários', () => {
+  const um = avaliarExtensao(
+    { ...base, carpaPresente: 4, pilaresPresente: 2, modulosFaltantes: 2 },
+    REGRA,
+  )
+  assert.match(um.conta, /um único critério \(Mentorias de Pilares\)/)
+  assert.match(um.conta, /não se compensam/)
+
+  const varios = avaliarExtensao(
+    { ...base, carpaPresente: 2, pilaresPresente: 1, modulosFaltantes: 8 },
+    REGRA,
+  )
+  assert.match(varios.conta, /Reprovado em 3 critérios/)
+  // A frase do caso limítrofe não pode aparecer aqui: ela descreveria mal a
+  // situação e gastaria o argumento onde ele não é necessário.
+  assert.doesNotMatch(varios.conta, /único critério/)
+})

@@ -116,7 +116,8 @@ Voltar ao painel, recarregar o perfil 1002.
 
 **Tela:** o terminal com `npm run testar`, 13 de 13.
 
-Escolha **dois** e diga o que aprendeu, não que foi difícil.
+Escolha **dois dos três** abaixo e diga o que aprendeu, não que foi difícil.
+O terceiro é o mais forte se você tiver tempo de mostrar o log na tela.
 
 > Dois desafios que mudaram o desenho.
 >
@@ -130,6 +131,23 @@ Escolha **dois** e diga o que aprendeu, não que foi difícil.
 > alcançar mais coisa, sem aviso. Não dá para resolver em código. Documentei o
 > limite na própria página raiz, em vez de afirmar um isolamento que a
 > ferramenta não sustenta.
+
+**Terceiro, opcional** — tela: o log com `finishReason: MAX_TOKENS`.
+
+> O terceiro apareceu na primeira execução real. Os alertas foram gravados com
+> a leitura cortada no meio da frase. Não era limite do Notion: o orçamento de
+> tokens do Gemini é compartilhado com o raciocínio interno do modelo, e o
+> raciocínio consumiu 383 dos 400 tokens. Sobraram 13 para a resposta.
+>
+> Aumentar o orçamento foi a correção fácil. A que importa foi outra: o código
+> lia o texto, via que não estava vazio, e considerava sucesso. Passei a tratar
+> `finishReason` diferente de `STOP` como falha — porque meia frase num campo
+> que a coordenação lê como orientação é pior que nenhuma frase, já que parece
+> completa.
+>
+> E repara que a conta determinística estava certa nos sete alertas. Só a
+> redação quebrou. É exatamente o que a separação entre decidir e redigir
+> deveria garantir.
 
 ---
 

@@ -235,7 +235,7 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 
 | Comando | O que faz |
 |---|---|
-| `npm run testar` | 15 testes do motor de regras. Sem rede, sem credencial. |
+| `npm run testar` | 16 testes do motor de regras. Sem rede, sem credencial. |
 | `npm run semear-playbook` | carrega `regras/*.md` na base Playbook |
 | `npm run gerar-alunos` | gera os 40 perfis sintéticos e carrega no Notion |
 | `npm run seed` | os dois acima, na ordem |

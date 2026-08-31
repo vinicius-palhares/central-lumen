@@ -144,14 +144,29 @@ function redigirConta(criterios, elegivel) {
     return `${c.nome}: ${base} — ${alvo}, ${marca}${nota}`
   })
 
-  const veredito =
-    elegivel === null
-      ? 'Indeterminado: faltam dados de presença.'
-      : elegivel
-        ? 'Todos os critérios cumpridos.'
-        : 'Reprovado por critério isolado — os pisos são independentes, não se compensam.'
+  return [...linhas, veredito(criterios, elegivel)].join('\n')
+}
 
-  return [...linhas, veredito].join('\n')
+/**
+ * O veredito precisa dizer QUANTOS critérios falharam, e não uma frase fixa.
+ *
+ * "Reprovado por critério isolado" é o argumento central quando falha UM
+ * critério: é a resposta a "mas ele está em 50%, quase lá". Aplicada a um aluno
+ * que falhou em três, a mesma frase descreve mal a situação — e gasta, no caso
+ * banal, o argumento que precisa ter força no caso limítrofe.
+ */
+function veredito(criterios, elegivel) {
+  if (elegivel === null) return 'Indeterminado: faltam dados de presença.'
+  if (elegivel) return 'Todos os critérios cumpridos.'
+
+  const reprovados = criterios.filter((c) => c.atende === false)
+  if (reprovados.length === 1) {
+    return (
+      `Reprovado por um único critério (${reprovados[0].nome}) — os pisos são ` +
+      'independentes e não se compensam entre si.'
+    )
+  }
+  return `Reprovado em ${reprovados.length} critérios: ${reprovados.map((c) => c.nome).join(', ')}.`
 }
 
 /**

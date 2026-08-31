@@ -216,10 +216,21 @@ for (const f of novos) porTipo[f.tipo] = (porTipo[f.tipo] ?? 0) + 1
 for (const [tipo, n] of Object.entries(porTipo)) console.log(`  ${tipo}: ${n}`)
 
 if (SECAR) {
-  console.log('\n--secar: detalhamento das primeiras 5 situações\n')
-  for (const f of novos.slice(0, 5)) {
+  // Ordena por ID antes de imprimir. O Notion devolve as páginas mais novas
+  // primeiro, e com um corte no topo da lista os perfis de demonstração —
+  // criados primeiro, portanto no fim — eram justamente os que sumiam do
+  // preview. Um modo seco que esconde o caso que você quer conferir não serve.
+  const ordenados = [...novos].sort((a, b) => a.aluno.alunoId - b.aluno.alunoId)
+  const TETO = 20
+
+  console.log(`\n--secar: detalhamento de ${Math.min(TETO, ordenados.length)} situações\n`)
+  for (const f of ordenados.slice(0, TETO)) {
     console.log(`─ ${f.aluno.alunoId} ${f.aluno.nome} — ${f.tipo} [${f.severidade}]`)
     console.log(`${f.conta}\n`)
+  }
+  // Corte silencioso lê como "cobri tudo". Se houve corte, ele é declarado.
+  if (ordenados.length > TETO) {
+    console.log(`(${ordenados.length - TETO} situações não detalhadas acima.)\n`)
   }
   console.log('Nada foi gravado no Notion e o Gemini não foi chamado.')
   process.exit(0)
@@ -322,13 +333,29 @@ async function redigir(f) {
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_KEY },
         body: JSON.stringify({
           contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 400 },
+          // maxOutputTokens generoso para um texto de 2 a 4 frases não é
+          // desperdício: neste modelo o orçamento é COMPARTILHADO com o
+          // raciocínio interno, que não pode ser desligado. Com 400, o
+          // raciocínio consumiu 383 e sobraram 13 tokens — a leitura saía
+          // cortada no meio da frase e era gravada no Notion como se estivesse
+          // completa. `thinkingConfig.thinkingBudget: 0` foi testado e devolve
+          // resposta vazia neste modelo, então a saída é orçamento maior.
+          generationConfig: { temperature: 0.2, maxOutputTokens: 2048 },
         }),
       },
     )
     if (!r.ok) throw new Error(`${r.status} ${await r.text()}`)
     const j = await r.json()
-    const texto = j.candidates?.[0]?.content?.parts?.map((p) => p.text).join('').trim()
+
+    const candidato = j.candidates?.[0]
+    const texto = candidato?.content?.parts?.map((p) => p.text).join('').trim()
+
+    // Truncamento NÃO pode passar por sucesso. Este texto vai para um campo que
+    // a coordenação lê como orientação; meia frase é pior que nenhuma, porque
+    // parece completa.
+    if (candidato?.finishReason && candidato.finishReason !== 'STOP') {
+      throw new Error(`geração interrompida (${candidato.finishReason})`)
+    }
     if (!texto) throw new Error('resposta vazia')
     return texto
   } catch (e) {

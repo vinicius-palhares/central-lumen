@@ -355,7 +355,12 @@ async function perguntar({ texto }: { texto: string }) {
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.1,
-          maxOutputTokens: 800,
+          // Orçamento compartilhado com o raciocínio interno do modelo, que
+          // neste caso consome a maior parte. Ver a nota em varredura.mjs: com
+          // 800, o raciocínio sozinho passava de 600 e a saída vinha cortada.
+          // Aqui o corte é ainda pior que na varredura, porque a resposta é
+          // JSON: truncar produz JSON inválido e derruba a rota inteira.
+          maxOutputTokens: 4096,
           responseMimeType: 'application/json',
         },
       }),
@@ -364,7 +369,13 @@ async function perguntar({ texto }: { texto: string }) {
   if (!r.ok) throw new Error(`Gemini ${r.status}: ${await r.text()}`)
 
   const j = await r.json()
-  const bruto = j.candidates?.[0]?.content?.parts?.map((p: { text: string }) => p.text).join('') ?? ''
+  const candidato = j.candidates?.[0]
+
+  if (candidato?.finishReason && candidato.finishReason !== 'STOP') {
+    throw new Error(`Gemini interrompeu a geração (${candidato.finishReason})`)
+  }
+
+  const bruto = candidato?.content?.parts?.map((p: { text: string }) => p.text).join('') ?? ''
 
   let saida: { resposta?: string; regraCitada?: string | null }
   try {
