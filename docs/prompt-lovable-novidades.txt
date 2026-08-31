@@ -1,0 +1,89 @@
+Adicione ao Central Lumen a marcação de alertas novos. A API já devolve tudo
+que é preciso — não invente cálculo no cliente.
+
+Preserve o sistema: tokens de src/styles.css, escala --spacing-grupo/bloco/secao,
+nada de cor, fonte ou token novo.
+
+
+=== O QUE A API PASSOU A DEVOLVER ===
+
+A ação { "acao": "alertas" } agora responde:
+
+  {
+    alertas: [ { ...campos de antes..., novo: true|false } ],
+    ultimaVarredura: "2026-08-31T02:10:00.000Z" | null,
+    novos: 2,
+    destacarNovos: true|false
+  }
+
+- `novo` por alerta: veio da varredura mais recente.
+- `ultimaVarredura`: quando essa varredura rodou. Pode ser null (base vazia).
+- `novos`: quantos são novos.
+- `destacarNovos`: SE marcar acrescenta informação. Obedeça este campo.
+
+
+=== A REGRA QUE NÃO PODE SER "SIMPLIFICADA" ===
+
+Só mostre os marcadores individuais quando `destacarNovos` for true.
+
+Quando todos os alertas abertos vieram da mesma varredura, o servidor manda
+`destacarNovos: false` mesmo com `novos` maior que zero. Isso é deliberado:
+marcar sete itens de "novo" numa lista de sete não distingue nada, só repete a
+contagem total com outra palavra.
+
+NÃO troque a condição por `novos > 0`. NÃO calcule você mesmo a partir de
+`novo`. O servidor já respondeu à pergunta "isto distingue alguma coisa?".
+
+
+=== 1. TÍTULO DA SEÇÃO ===
+
+Hoje: "Alertas abertos 7"
+
+Passa a ter uma terceira parte, em --texto-suave e text-xs, depois da contagem:
+
+- Se `destacarNovos` for true:
+    Alertas abertos  7  ·  2 novos na varredura de 31/08
+- Se for false e `ultimaVarredura` existir:
+    Alertas abertos  7  ·  varredura de 31/08
+- Se `ultimaVarredura` for null:
+    Alertas abertos  7
+  (nada a mais — sem texto de espera, sem traço)
+
+A data usa toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' }).
+Quando a varredura foi hoje, escreva "de hoje" em vez da data. Ontem, "de
+ontem". Compare por dia do calendário, não por diferença de 24 horas: uma
+varredura das 09:00 de hoje vista às 08:00 de amanhã é "de ontem", não "de
+hoje".
+
+
+=== 2. MARCA NO CARD ===
+
+Quando `destacarNovos` for true, todo card com `novo: true` ganha um chip com o
+texto "Novo", na mesma linha dos chips de tipo e severidade, ANTES deles.
+
+Estilo: use o Chip que já existe, com fundo --marca-suave e texto --marca.
+
+O anil é a cor de ação do sistema e não é usada para estado, então ela não
+compete com a escala de severidade — que é exatamente o motivo de usá-la aqui.
+Um chip "Novo" em vermelho ou âmbar seria lido como severidade, e "novo" não é
+um grau de gravidade.
+
+Não mude a ordem dos cards. A lista continua ordenada por severidade: um alerta
+novo de severidade baixa NÃO sobe na frente de um antigo de severidade alta.
+Novidade é um atributo, urgência é a ordem.
+
+
+=== 3. NADA MAIS ===
+
+Não adicione faixa no topo, não adicione toast, não adicione ponto vermelho no
+cabeçalho, não adicione som. A marcação vive onde a pessoa já vai olhar.
+
+
+=== VERIFICAÇÃO ===
+
+1. Com o estado atual da base (todos os alertas da mesma varredura), a API
+   responde destacarNovos: false. A tela tem que mostrar "varredura de ..." no
+   título e NENHUM chip "Novo" nos cards. Se aparecerem sete chips, a regra foi
+   invertida.
+2. Nenhum card mudou de posição.
+3. Em 375px, o título da seção quebra em duas linhas em vez de estourar.

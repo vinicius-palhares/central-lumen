@@ -10,7 +10,7 @@
     "semear-playbook": "node scripts/semear_playbook.mjs",
     "varredura": "node scripts/varredura.mjs",
     "varredura:secar": "node scripts/varredura.mjs --secar",
-    "testar": "node --test scripts/regras.test.mjs",
+    "testar": "node --test scripts/regras.test.mjs scripts/alertas.test.mjs",
     "testar:consultas": "node scripts/testar_consultas.mjs",
     "testar:tudo": "npm run testar && node scripts/testar_consultas.mjs --com-gemini",
     "prints": "node scripts/prints.mjs"

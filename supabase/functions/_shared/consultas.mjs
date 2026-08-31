@@ -166,6 +166,21 @@ export function criarConsultas({ notion, bases, geminiKey, modelo }) {
     }
   }
 
+  /**
+   * Janela que agrupa os alertas de uma mesma varredura.
+   *
+   * Uma varredura sobre 40 alunos leva um a dois minutos, e duas varreduras
+   * ficam a pelo menos 24 horas de distância. Dez minutos separa as duas coisas
+   * com folga larga dos dois lados.
+   *
+   * A alternativa seria carimbar um identificador de execução em cada alerta,
+   * o que é mais explícito — mas exigiria uma propriedade nova na base e
+   * regravar o que já existe. Agrupar por proximidade de tempo é suficiente
+   * enquanto a varredura for o ÚNICO produtor de alertas, que é o caso: não há
+   * caminho de código que crie alerta fora dela.
+   */
+  const JANELA_DA_VARREDURA_MS = 10 * 60 * 1000
+
   async function listarAlertas() {
     const paginas = await notion.consultarTudo(bases.alertas)
     const alertas = paginas
@@ -183,7 +198,42 @@ export function criarConsultas({ notion, bases, geminiKey, modelo }) {
       }))
       .sort((a, b) => peso(a.severidade) - peso(b.severidade))
 
-    return { alertas }
+    // "Novo" é o que saiu na varredura mais recente, e não o que a pessoa ainda
+    // não viu. A diferença é deliberada: por visita, abrir o painel duas vezes
+    // seguidas zeraria a marcação na segunda, o que num painel operacional lê
+    // como defeito. Por varredura, a marcação é estável até a próxima execução.
+    const carimbos = alertas.map((a) => (a.geradoEm ? Date.parse(a.geradoEm) : NaN)).filter(Number.isFinite)
+    const ultimaVarredura = carimbos.length ? Math.max(...carimbos) : null
+
+    for (const a of alertas) {
+      const t = a.geradoEm ? Date.parse(a.geradoEm) : NaN
+      a.novo = Number.isFinite(t) && ultimaVarredura !== null
+        && ultimaVarredura - t <= JANELA_DA_VARREDURA_MS
+    }
+
+    const novos = alertas.filter((a) => a.novo).length
+
+    return {
+      alertas,
+      // O carimbo permite à interface dizer QUANDO foi a varredura, em vez de
+      // um "novos" solto que não se ancora em nada.
+      ultimaVarredura: ultimaVarredura ? new Date(ultimaVarredura).toISOString() : null,
+      novos,
+      /**
+       * Se destacar os novos acrescenta informação.
+       *
+       * Quando TODOS os alertas abertos vieram da mesma varredura, marcar cada
+       * um de "novo" não distingue nada — só repete a contagem total com outra
+       * palavra, e sete marcadores idênticos numa lista de sete itens são ruído
+       * puro. Nesse caso a interface mostra a data da varredura, que informa, e
+       * omite a marcação, que não informa.
+       *
+       * A regra vive aqui e não na interface porque é semântica, não
+       * apresentação: a pergunta "isto distingue alguma coisa?" se responde
+       * onde os dados estão.
+       */
+      destacarNovos: novos > 0 && novos < alertas.length,
+    }
   }
 
   /**

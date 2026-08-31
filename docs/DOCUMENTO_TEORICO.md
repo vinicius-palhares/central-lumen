@@ -576,4 +576,4 @@ nega por piso isolado, mesmo com a soma das fases acima de 60%
 Esse caso existe porque a implementação errada — somar as duas fases e comparar
 com 60% — passa em todos os outros e falha só nele.
 
-Última execução: 16 de 16.
+Última execução: 21 de 21.

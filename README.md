@@ -92,18 +92,15 @@ Esse é o argumento, e ele é verificável: editar o texto da regra no Notion mu
 o comportamento da aplicação na chamada seguinte.
 
 > **Sobre notificação.** Uma versão anterior deste README afirmava que atribuir
-> o *Responsável* dispara a notificação nativa do Notion, e usava isso como
-> segundo argumento para a escolha. **Isso não se confirmou nesta configuração,
-> e a afirmação foi removida.** Duas causas, ambas verificadas: o token é um
-> Personal Access Token que age *como o próprio usuário*, então atribuir a si
-> mesmo é auto-ação e o Notion nunca notifica alguém da própria ação; e a
-> página-raiz é privada, então uma menção a outra pessoa não notifica porque
-> ela não enxerga a página.
+> o *Responsável* dispara a notificação nativa do Notion. **Isso não se
+> confirmou nesta configuração, e a afirmação foi removida.** Duas causas, ambas
+> verificadas: o token é um Personal Access Token que age *como o próprio
+> usuário*, então atribuir a si mesmo é auto-ação e o Notion nunca notifica
+> alguém da própria ação; e a página-raiz é privada, então uma menção a outra
+> pessoa também não alcança.
 >
-> Notificação **não é requisito** do trabalho — o enunciado pede automação, e a
-> varredura é a automação. O caminho para reativá-la sem escrever código é a
-> automação nativa do Notion, configurada na interface da base de Alertas, que
-> não passa pela API e portanto escapa das duas causas acima.
+> O aviso passou a viver **dentro do painel**, e não no Notion. Ver
+> [Novidades desde a última varredura](#novidades-desde-a-última-varredura).
 
 **Autenticação:** token `Bearer` no header, versão da API fixada em
 `2022-06-28`.
@@ -193,6 +190,34 @@ base.
 Jornadas encerradas (Churn, Abandonou, Reembolsado) são puladas. Cobrar plano
 de acompanhamento de quem pediu reembolso é o tipo de ruído que faz um painel
 inteiro ser ignorado.
+
+### Novidades desde a última varredura
+
+O painel marca quais alertas saíram da varredura mais recente: uma contagem no
+título da seção e um chip nos cards.
+
+**O que isto é, dito com precisão:** o painel informa o que mudou **quando você
+o abre**. Não é notificação por envio. Ninguém é alcançado enquanto está fora do
+sistema — a varredura roda de manhã, e a coordenação descobre ao abrir o painel.
+Chamar isso de "notificação" sem a ressalva seria o mesmo erro que este README
+já cometeu uma vez.
+
+Duas decisões que valem registro:
+
+**A referência é a varredura, não a visita.** Marcar "o que você ainda não viu"
+usaria a trilha de auditoria, que já registra cada consulta. Foi descartado
+porque degenera: abrir o painel duas vezes seguidas zeraria a marcação na
+segunda, e num painel operacional isso lê como defeito. Por varredura, a
+marcação é estável até a próxima execução.
+
+**Quando tudo é novo, nada é marcado.** Se todos os alertas abertos vieram da
+mesma varredura, o servidor devolve `destacarNovos: false` mesmo com
+`novos > 0`. Sete marcadores idênticos numa lista de sete não distinguem nada —
+só repetem a contagem total com outra palavra. Nesse caso a interface mostra a
+data da varredura, que informa, e omite a marcação, que não informa.
+
+A regra vive no servidor, e não na interface, porque a pergunta *"isto distingue
+alguma coisa?"* é semântica e se responde onde os dados estão.
 
 ---
 
@@ -307,7 +332,7 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 
 | Comando | O que faz |
 |---|---|
-| `npm run testar` | 16 testes do motor de regras. Sem rede, sem credencial. |
+| `npm run testar` | 21 testes: motor de regras e marcação de novos. Sem rede. |
 | `npm run semear-playbook` | carrega `regras/*.md` na base Playbook |
 | `npm run gerar-alunos` | gera os 40 perfis sintéticos e carrega no Notion |
 | `npm run seed` | os dois acima, na ordem |
@@ -378,7 +403,8 @@ scripts/
   gerar_alunos.mjs          40 perfis sintéticos -> Notion
   semear_playbook.mjs       regras/*.md -> Notion
   varredura.mjs             A AUTOMAÇÃO
-  regras.test.mjs           16 testes, sem rede
+  regras.test.mjs           16 testes do motor de regras
+  alertas.test.mjs          5 testes da marcação de novos
   testar_consultas.mjs      fumaça contra o Notion real
 supabase/
   functions/

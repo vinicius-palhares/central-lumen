@@ -117,7 +117,7 @@ Voltar ao painel, recarregar o perfil 1002.
 
 ## Bloco 4 — Desafios (3:00 – 3:30)
 
-**Tela:** o terminal com `npm run testar`, 16 de 16.
+**Tela:** o terminal com `npm run testar`, 21 de 21.
 
 Escolha **dois dos três** abaixo e diga o que aprendeu, não que foi difícil.
 O terceiro é o mais forte se você tiver tempo de mostrar o log na tela.
