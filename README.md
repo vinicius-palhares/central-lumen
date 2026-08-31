@@ -6,6 +6,8 @@ instituição sobre os dados e abrir alertas acionáveis automaticamente.
 
 Trabalho da disciplina de Integração de APIs — UniFECAF.
 
+**Aplicação:** https://lumen-school-pulse.lovable.app
+
 > Projeto acadêmico. O **Instituto Lumen** é uma instituição fictícia. Os 40
 > perfis de aluno são sintéticos, gerados por script versionado com semente
 > fixa. Nenhum dado corresponde a pessoa real.

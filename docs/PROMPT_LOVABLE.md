@@ -37,6 +37,16 @@ entrar sem conta, mostre a mensagem de erro do Supabase, não invente fluxo.
 Rota protegida: sem sessão ativa, qualquer rota redireciona para /login.
 Ao sair, supabase.auth.signOut() e volta para /login.
 
+Layout da tela de login: um CARD centrado nos dois eixos, com max-width de
+24rem, superfície --superficie, borda de 1px em --borda e o raio do tema.
+O card fica dentro das margens laterais: recuo mínimo de 16px em cada lado,
+para ele nunca encostar na viewport em telas estreitas.
+Não deixe o formulário ocupar a largura da página. Um campo de senha com
+1400px de largura numa tela grande é o padrão que o layout precisa evitar, e
+ele acontece por omissão quando o formulário não tem largura máxima.
+Dentro do card: 8px entre rótulo e campo, 24px entre os dois grupos de campo,
+e 24px antes do botão. O botão ocupa a largura do card.
+
 === API ===
 
 Endpoint único, sempre POST:
@@ -309,4 +319,43 @@ fonte confiável precisa ser distinguível de um alerta leve apoiado em fonte
 pendente.
 Onde o status da fonte for "Para revisar", mostre o aviso de ressalva ANTES do
 texto da resposta, não depois.
+```
+
+### 8. A tela de login precisa ser um card
+
+Este refino existe porque a primeira versão gerada saiu sem ele: a seção de
+autenticação do prompt descrevia só comportamento, e o formulário nasceu com a
+largura inteira da página. Em 1440px o campo de senha tinha 1400px.
+
+```
+Na tela de login, envolva o formulário num card centrado nos dois eixos:
+max-width 24rem, superfície --superficie, borda 1px --borda, raio do tema,
+padding interno de 24px.
+
+O card respeita as margens laterais — recuo mínimo de 16px de cada lado — e
+nunca encosta na viewport.
+
+Dentro do card: 8px entre rótulo e campo, 24px entre o grupo de e-mail e o de
+senha, 24px antes do botão. O botão ocupa a largura do card.
+
+Verifique em 1440px e em 375px. Em 1440 o card fica com 384px no centro; em
+375 ele ocupa a largura menos os 16px de cada lado.
+```
+
+### 9. Hidratação
+
+A primeira versão gerada emitiu `Minified React error #418` no console ao
+carregar. Não quebra a aplicação, mas erro de console é ruído que esconde o
+próximo erro de verdade.
+
+```
+O console emite "Minified React error #418" (falha de hidratação) ao carregar
+a página. Encontre a origem e corrija.
+
+Suspeita mais provável: leitura de preferência de tema, de localStorage ou de
+window durante a primeira renderização, produzindo marcação diferente da que
+foi renderizada antes da hidratação. Se for esse o caso, mova a leitura para
+um efeito e renderize o estado neutro no primeiro passo.
+
+Não silencie o aviso com suppressHydrationWarning sem antes achar a causa.
 ```
