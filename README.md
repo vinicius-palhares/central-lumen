@@ -335,14 +335,28 @@ supabase/
     _shared/notion.mjs      cliente REST, compartilhado Node e Deno
     _shared/regras.mjs      o motor de regras
     _shared/consultas.mjs   camada de dados do painel
-    painel/index.ts         autenticacao, roteamento e auditoria
+    painel/index.ts         autenticação, roteamento e auditoria
   migrations/               perfis, auditoria, gatilho de perfil
+Code/                       o front-end, exportado do Lovable
+  DESIGN.md                 o design system, derivado do código
+  .impeccable/design.json   rampas tonais e componentes do design system
+  src/routes/               login e painel
+  src/components/           os componentes próprios
+  src/styles.css            os tokens: 21 cores por tema, dois temas
 docs/
-  TOKENS.css                tema em variáveis CSS
-  PROMPT_LOVABLE.md         especificação da interface
+  TOKENS.css                tema em variáveis CSS, o ponto de partida
+  PROMPT_LOVABLE.md         especificação original da interface
+  PROMPT_REVISAO_INTERFACE.md  as correções de interface, com a justificativa
+  prompt-lovable.txt        extrato do anterior, pronto para colar
   DOCUMENTO_TEORICO.md      documento da disciplina
   ROTEIRO_VIDEO.md          roteiro do pitch de 4 minutos
 ```
+
+Duas fontes de verdade convivem no repositório, e a distinção importa:
+`docs/PROMPT_LOVABLE.md` é a **especificação** da interface, escrita antes de
+existir código; `Code/DESIGN.md` é o **sistema que de fato foi construído**,
+derivado do código depois. Quando os dois divergirem, o DESIGN.md está certo —
+ele descreve, a especificação prescrevia.
 
 `_shared/` guarda o que roda nos dois runtimes. O cliente do Notion foi escrito
 à mão em vez de usar `@notionhq/client` justamente por isso: a mesma conversão
