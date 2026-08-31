@@ -230,24 +230,73 @@ conta e a leitura gerada, a conta prevalece.
 
 ## Prints
 
-> A preencher após o build no Lovable. Cada print abaixo corresponde a um
-> comportamento que o projeto precisa demonstrar.
+### O par que define o projeto
 
-| Print | O que precisa mostrar |
+A mesma pergunta, dois alunos, resultados opostos — e o motivo visível na tela.
+
+**Isabela Fontoura (1001): 4 de 5 no CARPA, 3 de 7 em Pilares.**
+
+![Perfil 1001, elegível à extensão](docs/prints/03-regra-concede.png)
+
+**Otávio Peixoto (1002): os mesmos 4 de 5 no CARPA, e 2 de 7 em Pilares.**
+
+![Perfil 1002, extensão negada](docs/prints/04-regra-nega.png)
+
+Somando as duas fases, Otávio tem 6 de 12 — cinquenta por cento. Um sistema que
+calculasse média diria "quase lá". A Central nega, e a tela mostra por quê: só
+*Mentorias de Pilares* está em vermelho, com `obtido 2 de 7 · mínimo 3`.
+
+Repare que são **duas barras separadas**. Não é escolha estética: uma barra
+única de "participação" mostraria 50% e esconderia exatamente a informação que
+decide o caso.
+
+### A conta que sustenta o alerta
+
+![Card de alerta expandido, com a conta determinística](docs/prints/05-conta-do-alerta.png)
+
+No card fechado, o veredito monoespaçado responde "por quê" sem clique. Aberto,
+mostra a conta inteira — computada em código — logo abaixo da leitura redigida
+pelo modelo. As duas lado a lado, e o alerta declara que a conta prevalece.
+
+### O painel
+
+![Painel com a faixa de indicadores e os alertas](docs/prints/02-painel.png)
+
+*Alertas de severidade alta* é o único indicador em destaque, porque é o único
+acionável. Os alertas vêm ordenados por severidade, e a ordem da API é
+preservada.
+
+### O guardrail
+
+![Recusa de estimar preço, com procedência](docs/prints/06-confianca.png)
+
+Preço não está documentado em nenhuma fonte que a aplicação consulta. Ela
+recusa em vez de estimar, e mostra de onde tirou a recusa.
+
+### Os demais
+
+| Print | O que mostra |
 |---|---|
-| `01-login.png` | tela de login, e a tela de 403 para perfil não liberado |
-| `02-painel.png` | faixa de indicadores e alertas ordenados por severidade |
-| `03-regra-concede.png` | perfil 1001, as duas barras separadas, veredito Elegível |
-| `04-regra-nega.png` | perfil 1002, 2 de 7 em Pilares, veredito Não elegível com o critério reprovado destacado |
-| `05-conta-do-alerta.png` | card de alerta expandido, conta determinística ao lado da leitura gerada |
-| `06-confianca.png` | resposta apoiada em regra "Para revisar", com a ressalva |
-| `07-notion-alertas.png` | a base de Alertas no Notion, com responsável atribuído |
-| `08-mobile-375.png` | 375px, sem rolagem horizontal |
+| [01-login.png](docs/prints/01-login.png) | card de login centrado, sem cadastro aberto |
+| [08-mobile-375.png](docs/prints/08-mobile-375.png) | 375px, sem rolagem horizontal |
+| [09-perfil-bloqueado.png](docs/prints/09-perfil-bloqueado.png) | o 403: credencial válida, acesso não liberado, com saída explícita |
+| `07-notion-alertas.png` | **a capturar à mão** — a base de Alertas no Notion exige sessão do Notion, que o navegador do script não tem |
 
-O par 03/04 é a demonstração mais curta de que o sistema aplica a regra em vez
-de gerar texto plausível.
+### Como regerar
 
----
+```bash
+npm run prints
+```
+
+O script obtém a sessão por magic link gerado pela Admin API e a injeta no
+navegador. **Nenhuma senha é digitada, lida ou guardada** — um script de
+captura não precisa da credencial de ninguém.
+
+Cada captura espera por um estado nomeado antes de disparar. A primeira versão
+esperava pelo texto "Avaliação da extensão" e capturou a tela em
+"Carregando…": a descrição do painel contém essa frase e já existe no
+esqueleto, então a espera resolvia na hora. Agora espera pelo título virar o
+nome do aluno.
 
 ## Como executar
 
@@ -264,6 +313,7 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 | `npm run seed` | os dois acima, na ordem |
 | `npm run varredura:secar` | roda a avaliação e imprime, **sem** gravar e sem chamar o Gemini |
 | `npm run varredura` | a automação completa |
+| `npm run prints` | regera as capturas de `docs/prints/`, sem usar senha |
 | `npm run testar:consultas` | camada de dados do painel contra o Notion real |
 | `npm run testar:tudo` | as duas baterias, incluindo as rotas do Gemini |
 

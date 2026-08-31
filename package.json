@@ -12,9 +12,13 @@
     "varredura:secar": "node scripts/varredura.mjs --secar",
     "testar": "node --test scripts/regras.test.mjs",
     "testar:consultas": "node scripts/testar_consultas.mjs",
-    "testar:tudo": "npm run testar && node scripts/testar_consultas.mjs --com-gemini"
+    "testar:tudo": "npm run testar && node scripts/testar_consultas.mjs --com-gemini",
+    "prints": "node scripts/prints.mjs"
   },
   "engines": {
     "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.0"
   }
 }
