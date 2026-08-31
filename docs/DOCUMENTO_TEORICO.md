@@ -60,7 +60,7 @@ código, e o modelo só redige.*
 | Notion · Playbook | guarda o texto da regra, com os limiares | não calcula |
 | Motor de regras | faz a aritmética e registra a conta literal | não define a regra |
 | Gemini | redige a leitura para a coordenação | **não decide** |
-| Notion · Alertas | registra o caso e notifica o responsável | não guarda regra |
+| Notion · Alertas | registra o caso como trabalho atribuído | não guarda regra |
 
 Cada fronteira dessa tabela responde a uma falha da seção anterior.
 
@@ -116,8 +116,8 @@ Faz dois papéis, e é a dupla função que justifica a escolha em vez de Airtab
 | Lumen · Playbook | as regras, uma por página |
 | Lumen · Alertas | saída da automação |
 
-**Como canal de notificação.** O campo *Responsável* é do tipo pessoa;
-atribuir dispara a notificação nativa do Notion, no aplicativo e por e-mail.
+**Como fila de trabalho atribuída.** O campo *Responsável* é do tipo pessoa, e
+a base funciona como fila: cada caso tem dono, severidade, prazo e status.
 
 Duas justificativas, uma organizacional e uma técnica.
 
@@ -126,20 +126,32 @@ a coordenação já escreve é uma regra que ela mantém. Uma regra que vive num
 banco que ela não abre vira documentação morta em duas semanas — e aí o sistema
 volta a ter regra desatualizada, que é a falha nº 1 da seção anterior.
 
-*Técnica:* o Notion resolve a notificação sem serviço adicional. A alternativa
-seria integrar um provedor de e-mail ou um webhook de Slack, o que somaria uma
-credencial, uma fila de retentativa e **um segundo lugar por onde dado de aluno
-trafega**. Reduzir a superfície de tratamento é um objetivo de governança, não
-só economia de código.
+*Técnica:* o Notion entrega, sem serviço adicional, a estrutura que o caso de
+uso exige — relação entre bases, campo de pessoa, status e prazo. A alternativa
+para a parte de atribuição seria integrar um provedor de e-mail ou um webhook,
+o que somaria uma credencial, uma fila de retentativa e **um segundo lugar por
+onde dado de aluno trafega**. Reduzir a superfície de tratamento é um objetivo
+de governança, não só economia de código.
+
+**Correção a uma versão anterior deste documento.** A justificativa técnica
+original dizia que atribuir o *Responsável* dispara a notificação nativa do
+Notion. A afirmação foi escrita a partir do comportamento documentado da
+ferramenta, e **não se confirmou em teste**. Está corrigida aqui em vez de
+apagada, porque a causa é instrutiva. Ver a seção 5.
 
 *O que se perde:* o Notion não é um banco relacional. Não há transação, não há
 constraint de integridade, e a paginação é de 100 itens. A escolha é defensável
 nesta escala e seria questionável em ordens de grandeza acima.
 
-**Autenticação:** integração interna com token `Bearer`, escopo concedido por
-compartilhamento de página. Versão da API fixada em `2022-06-28` no header —
-deixar sem fixar significa aceitar mudança de contrato num deploy que ninguém
-fez.
+**Autenticação:** token `Bearer` no header, com a versão da API fixada em
+`2022-06-28` — deixar sem fixar significa aceitar mudança de contrato num
+deploy que ninguém fez.
+
+O token em uso é um **Personal Access Token**, e a distinção é material para a
+seção 5. Um PAT age com as permissões do usuário que o emitiu, sobre tudo que
+esse usuário enxerga no workspace. Uma integração interna, ao contrário, só
+alcança as páginas explicitamente compartilhadas com ela. As duas coisas usam o
+mesmo header e o mesmo código; o escopo é radicalmente diferente.
 
 ### Google Gemini API (`generativelanguage.googleapis.com/v1beta`)
 
@@ -184,7 +196,7 @@ divergem na primeira vez que a coordenação editar uma delas.
                               ├─5. pede redação─▶ Gemini
                               │◀──── texto ──────┘
                               ▼ 6. grava
-                        Notion · Alertas ─7. notifica─▶ responsável
+                        Notion · Alertas ─7. atribui──▶ responsável
 ```
 
 O passo 4 não é detalhe. Sem deduplicação, uma varredura diária reabre o mesmo
@@ -222,11 +234,68 @@ porque uma demonstração que depende de esperar o cron não é demonstração.
 
 | Credencial | Onde vive | Alcance |
 |---|---|---|
-| Token do Notion | segredo da Edge Function e do Actions | só as páginas compartilhadas |
+| Token do Notion | segredo da Edge Function e do Actions | **tudo que o usuário emissor enxerga** |
 | Chave do Gemini | segredo da Edge Function e do Actions | cota do projeto |
 | JWT do usuário | navegador, emitido pelo Supabase | a própria sessão |
 
 As duas primeiras nunca chegam ao navegador. A terceira nunca chega ao Notion.
+
+### O escopo do token do Notion é maior do que este documento afirmava
+
+Uma versão anterior descrevia o alcance da primeira linha como "só as páginas
+compartilhadas". **Estava errado**, e a correção importa mais que o erro.
+
+O que revelou foi uma chamada trivial:
+
+```
+GET /v1/users -> 403
+{"code":"restricted_resource",
+ "message":"Personal access tokens cannot list users."}
+```
+
+O token não é o de uma integração interna: e um **Personal Access Token**. Um
+PAT age *como o usuário que o emitiu*, com as permissões dele sobre o workspace
+inteiro. Não há escopo por compartilhamento de página — o escopo é a conta.
+
+Três consequências, em ordem de gravidade:
+
+**Alcance.** O token guardado como segredo desta aplicação acadêmica alcança,
+em principio, tudo que a conta emissora enxerga no workspace corporativo,
+inclusive páginas que nada têm a ver com o projeto. A "fronteira de dados"
+declarada na página-raiz é uma convenção do código — a varredura e o painel só
+tocam as três bases — e não uma restrição imposta pela credencial. Convenção de
+código protege contra engano, não contra abuso.
+
+**Atribuição.** Toda ação da aplicação aparece no Notion como ação do usuário,
+não de um bot. O histórico da página não distingue o que a automação escreveu
+do que a pessoa escreveu, o que enfraquece a auditoria do lado do Notion.
+
+**Notificação.** Foi a consequência que apareceu primeiro, e por um caminho
+enviesado: nenhum dos sete alertas notificou ninguém. A hipótese inicial — "o
+Notion não notifica ações de integração" — estava errada. A causa real são dois
+fatos somados, ambos verificados:
+
+1. O PAT age como o próprio usuário, e o destinatário configurado era esse
+   mesmo usuário. **Ninguém é notificado da própria ação.**
+2. A página-raiz foi criada sem página-mãe, o que a torna uma página privada de
+   workspace. Uma menção a outra pessoa também não notifica, porque essa pessoa
+   não tem acesso à página.
+
+O diagnóstico só fechou ao inspecionar `created_by` de um comentário criado via
+API e ver que era o usuário, não o bot. Vale registrar o método: a hipótese
+plausível e errada sobreviveu a dois testes; o que a derrubou foi olhar o dado
+de atribuição em vez de observar o efeito.
+
+**Correção para produção**, e é pré-requisito, não melhoria: criar uma
+integração interna dedicada, compartilhar apenas a página-raiz com ela, e mover
+a raiz para um teamspace com os destinatários dos alertas. As três consequências
+acima caem juntas — o escopo passa a ser real, a atribuição passa a ser do bot,
+e a notificação passa a ter ator e destinatário distintos.
+
+Notificação, registre-se, **não é requisito do enunciado**, que pede automação.
+A automação existe e funciona. O que este documento corrige é uma afirmação
+sobre uma capacidade acessória, e uma afirmação sobre escopo de credencial — a
+segunda sendo a que realmente importa.
 
 ### Autenticação separada de autorização
 
@@ -290,7 +359,7 @@ mitigada porque a capacidade não existe.
 |---|---|---|
 | Cadastro do aluno | Notion · Alunos | é o banco no-code; fonte única |
 | Regras | Notion · Playbook | editável por quem é dono da regra |
-| Alertas | Notion · Alertas | onde o trabalho é feito e notificado |
+| Alertas | Notion · Alertas | a fila onde o trabalho é feito |
 | Contas de acesso | Supabase `auth.users` | gerido pelo provedor |
 | Trilha de auditoria | Supabase `acessos` | precisa ser inacessível ao auditado |
 

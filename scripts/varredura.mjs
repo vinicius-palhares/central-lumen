@@ -18,10 +18,16 @@
  * "Conta que sustenta". A leitura gerada aparece ao lado, e qualquer divergência
  * entre as duas é visível na mesma tela.
  *
- * Por que não existe envio de e-mail: o Notion notifica nativamente quem está
- * no campo Responsável. Construir um canal de envio próprio adicionaria um
- * serviço, uma credencial e uma fila de retentativa para reproduzir o que a
- * ferramenta já faz — e criaria um segundo lugar onde dado de aluno trafega.
+ * Por que não existe envio de e-mail: o alerta é aberto como trabalho atribuído
+ * na fila que a coordenação já usa. Construir um canal de envio próprio
+ * adicionaria um serviço, uma credencial e uma fila de retentativa, e criaria um
+ * segundo lugar onde dado de aluno trafega.
+ *
+ * A notificação nativa do Notion é o complemento natural disso, mas ela NÃO
+ * dispara em qualquer configuração. Ela exige que o responsável seja outra
+ * pessoa que não a dona do token, e que essa pessoa tenha acesso à página. Com
+ * um Personal Access Token apontando para o próprio dono, como na configuração
+ * de desenvolvimento, o Notion trata tudo como auto-ação e não notifica nada.
  *
  *   node scripts/varredura.mjs [--secar] [--limite N]
  *
@@ -50,7 +56,7 @@ if (!SECAR && !GEMINI_KEY) {
 if (!SECAR && !RESPONSAVEL) {
   console.warn(
     'AVISO: NOTION_RESPONSAVEL_ID não definido.\n' +
-      'Os alertas serão criados sem responsável, e o Notion NÃO vai notificar ninguém.\n',
+      'Os alertas serão criados sem dono, e ninguém será notificado.\n',
   )
 }
 
@@ -277,7 +283,11 @@ for (const f of novos) {
 }
 
 console.log(`\n${criados} alertas abertos no Notion.`)
-if (RESPONSAVEL) console.log('Responsável atribuído — o Notion notifica.')
+if (RESPONSAVEL) {
+  console.log('Responsável atribuído.')
+  // Atribuir não garante notificação: o Notion não notifica ninguém da própria
+  // ação, nem sobre página que a pessoa não enxerga. Ver a nota no cabeçalho.
+}
 
 // ─── Gemini ───────────────────────────────────────────────────────────
 

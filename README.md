@@ -39,7 +39,7 @@ modelo só redige.**
 | Notion (Playbook) | guarda o texto da regra, com os limiares | não calcula |
 | `_shared/regras.mjs` | faz a aritmética e registra a conta literal | não decide o texto da regra |
 | Gemini | redige a leitura para a coordenação | **não decide elegibilidade** |
-| Notion (Alertas) | registra o caso e notifica o responsável | não guarda regra |
+| Notion (Alertas) | registra o caso como trabalho atribuído | não guarda regra |
 
 Essa separação é a decisão de arquitetura do projeto. Se o modelo avaliasse a
 elegibilidade, duas execuções sobre o mesmo aluno poderiam divergir e não
@@ -81,18 +81,39 @@ Faz dois papéis, e é essa dupla função que justifica a escolha.
 operacional), *Playbook* (regras) e *Alertas* (saída da automação). A relação
 entre elas é nativa da ferramenta, não emulada em código.
 
-**Canal de notificação.** O campo *Responsável* de um alerta é do tipo pessoa.
-Atribuir dispara a notificação nativa do Notion, no app e por e-mail.
+**Fila de trabalho atribuída.** O campo *Responsável* é do tipo pessoa, e a
+base de Alertas funciona como fila: cada caso tem dono, severidade, prazo e
+status.
 
 *Por que esta e não Airtable:* a coordenação já trabalha em Notion. Uma regra
 que vive onde a coordenação já escreve é uma regra que ela mantém; uma regra
 que vive num banco que ela não abre vira documentação morta em duas semanas.
-Além disso, o Notion resolve a notificação sem serviço adicional — integrar um
-Resend ou um Slack só para avisar alguém adicionaria uma credencial, uma fila
-de retentativa e um segundo lugar por onde dado de aluno trafega.
+Esse é o argumento, e ele é verificável: editar o texto da regra no Notion muda
+o comportamento da aplicação na chamada seguinte.
 
-**Autenticação:** integração interna, token `Bearer`, escopo por página
-compartilhada. Versão da API fixada em `2022-06-28` no header.
+> **Sobre notificação.** Uma versão anterior deste README afirmava que atribuir
+> o *Responsável* dispara a notificação nativa do Notion, e usava isso como
+> segundo argumento para a escolha. **Isso não se confirmou nesta configuração,
+> e a afirmação foi removida.** Duas causas, ambas verificadas: o token é um
+> Personal Access Token que age *como o próprio usuário*, então atribuir a si
+> mesmo é auto-ação e o Notion nunca notifica alguém da própria ação; e a
+> página-raiz é privada, então uma menção a outra pessoa não notifica porque
+> ela não enxerga a página.
+>
+> Notificação **não é requisito** do trabalho — o enunciado pede automação, e a
+> varredura é a automação. O caminho para reativá-la sem escrever código é a
+> automação nativa do Notion, configurada na interface da base de Alertas, que
+> não passa pela API e portanto escapa das duas causas acima.
+
+**Autenticação:** token `Bearer` no header, versão da API fixada em
+`2022-06-28`.
+
+O token em uso é um **Personal Access Token**, e é importante ser preciso sobre
+o que isso significa: ele age com as permissões do usuário que o emitiu, sobre
+tudo que esse usuário enxerga no workspace. **Não** é escopo por página
+compartilhada. Uma integração interna dedicada, compartilhada apenas com a
+página-raiz, daria o escopo estreito — e é o que a promoção a produção exige.
+Ver [Segurança e governança](#segurança-e-governança).
 
 ### 2. Google Gemini API — `generativelanguage.googleapis.com/v1beta`
 
@@ -136,7 +157,7 @@ duas fontes da verdade que divergem na primeira edição.
                                        │ grava
                                        ▼
                              ┌───────────────────┐
-                             │ Notion · Alertas  │──notifica──▶ responsável
+                             │ Notion · Alertas  │──atribui──▶ responsável
                              └───────────────────┘
 ```
 
@@ -251,11 +272,14 @@ um erro de mapeamento depois de gravar 40 páginas no Notion.
 
 ### Preparar o Notion
 
-1. Criar uma integração interna em notion.so/my-integrations.
+1. Criar uma **integração interna** em notion.so/my-integrations — não um
+   Personal Access Token. A diferença importa: o PAT herda todo o acesso do
+   usuário que o emitiu, enquanto a integração só alcança o que for
+   explicitamente compartilhado com ela.
 2. Compartilhar **apenas** a página *Lumen · Central de Monitoramento* com ela.
 3. Copiar o token para `NOTION_TOKEN`.
-4. Pegar o próprio ID de usuário do Notion e pôr em `NOTION_RESPONSAVEL_ID` —
-   sem ele os alertas são criados, mas ninguém é notificado.
+4. Pôr em `NOTION_RESPONSAVEL_ID` o ID do usuário que deve receber os alertas.
+   Sem ele os alertas são criados sem dono.
 
 Os IDs das três bases estão versionados em `scripts/config.mjs`. Conhecer o ID
 não dá acesso; o acesso vem do token.

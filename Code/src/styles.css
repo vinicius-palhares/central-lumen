@@ -1,0 +1,245 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Central Lumen — tema.
+ *
+ * Paleta de severidade separada da paleta de marca de propósito. Num painel de
+ * monitoramento a cor carrega significado, e reaproveitar o azul da marca para
+ * "atenção" faz o operador aprender a ignorar o azul.
+ *
+ * Nunca use classe de cor literal do Tailwind (bg-red-500, text-gray-600).
+ * Toda cor sai de uma variável daqui.
+ */
+
+:root {
+  /* Superfícies, do fundo para a frente */
+  --fundo: 0 0% 98%;
+  --superficie: 0 0% 100%;
+  --superficie-alta: 240 20% 97%;
+  --borda: 240 6% 90%;
+  --borda-forte: 240 6% 80%;
+
+  /* Texto */
+  --texto: 240 10% 12%;
+  --texto-suave: 240 5% 42%;
+  --texto-fraco: 240 5% 58%;
+
+  /* Marca — usada em ação e navegação, nunca em estado */
+  --marca: 243 75% 58%;
+  --marca-contraste: 0 0% 100%;
+  --marca-suave: 243 75% 96%;
+
+  /* Severidade — o vocabulário de estado do painel */
+  --alta: 0 72% 48%;
+  --alta-suave: 0 86% 96%;
+  --media: 32 90% 44%;
+  --media-suave: 36 92% 95%;
+  --baixa: 240 5% 46%;
+  --baixa-suave: 240 10% 95%;
+  --ok: 152 62% 36%;
+  --ok-suave: 152 60% 95%;
+
+  /* Confiança da fonte — deliberadamente distinta de severidade. */
+  --confianca-alta: 200 80% 38%;
+  --confianca-media: 280 45% 50%;
+
+  --raio: 0.625rem;
+
+  /* Largura máxima do painel. */
+  --largura-painel: 88rem;
+}
+
+/* Escuro por preferência do sistema, a menos que o usuário tenha escolhido claro. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fundo: 240 10% 8%;
+    --superficie: 240 8% 11%;
+    --superficie-alta: 240 8% 15%;
+    --borda: 240 6% 20%;
+    --borda-forte: 240 6% 30%;
+
+    --texto: 0 0% 96%;
+    --texto-suave: 240 5% 68%;
+    --texto-fraco: 240 5% 52%;
+
+    --marca: 243 80% 70%;
+    --marca-contraste: 240 10% 8%;
+    --marca-suave: 243 40% 18%;
+
+    --alta: 0 80% 66%;
+    --alta-suave: 0 50% 16%;
+    --media: 36 90% 60%;
+    --media-suave: 32 50% 15%;
+    --baixa: 240 5% 62%;
+    --baixa-suave: 240 6% 18%;
+    --ok: 152 55% 55%;
+    --ok-suave: 152 40% 14%;
+
+    --confianca-alta: 200 75% 62%;
+    --confianca-media: 280 55% 70%;
+  }
+}
+
+/* Escolha explícita do usuário vence a preferência do sistema, nos dois sentidos. */
+:root[data-tema="escuro"] {
+  --fundo: 240 10% 8%;
+  --superficie: 240 8% 11%;
+  --superficie-alta: 240 8% 15%;
+  --borda: 240 6% 20%;
+  --borda-forte: 240 6% 30%;
+  --texto: 0 0% 96%;
+  --texto-suave: 240 5% 68%;
+  --texto-fraco: 240 5% 52%;
+  --marca: 243 80% 70%;
+  --marca-contraste: 240 10% 8%;
+  --marca-suave: 243 40% 18%;
+  --alta: 0 80% 66%;
+  --alta-suave: 0 50% 16%;
+  --media: 36 90% 60%;
+  --media-suave: 32 50% 15%;
+  --baixa: 240 5% 62%;
+  --baixa-suave: 240 6% 18%;
+  --ok: 152 55% 55%;
+  --ok-suave: 152 40% 14%;
+  --confianca-alta: 200 75% 62%;
+  --confianca-media: 280 55% 70%;
+}
+
+/*
+ * Mapeamento dos tokens para utilitários do Tailwind. Os nomes semânticos do
+ * shadcn/ui apontam para as mesmas variáveis, para que os componentes de base
+ * herdem o tema sem cor literal.
+ */
+@theme inline {
+  --radius-sm: calc(var(--raio) - 4px);
+  --radius-md: calc(var(--raio) - 2px);
+  --radius-lg: var(--raio);
+  --radius-xl: calc(var(--raio) + 4px);
+  --radius-2xl: calc(var(--raio) + 8px);
+
+  --color-fundo: hsl(var(--fundo));
+  --color-superficie: hsl(var(--superficie));
+  --color-superficie-alta: hsl(var(--superficie-alta));
+  --color-borda: hsl(var(--borda));
+  --color-borda-forte: hsl(var(--borda-forte));
+
+  --color-texto: hsl(var(--texto));
+  --color-texto-suave: hsl(var(--texto-suave));
+  --color-texto-fraco: hsl(var(--texto-fraco));
+
+  --color-marca: hsl(var(--marca));
+  --color-marca-contraste: hsl(var(--marca-contraste));
+  --color-marca-suave: hsl(var(--marca-suave));
+
+  --color-alta: hsl(var(--alta));
+  --color-alta-suave: hsl(var(--alta-suave));
+  --color-media: hsl(var(--media));
+  --color-media-suave: hsl(var(--media-suave));
+  --color-baixa: hsl(var(--baixa));
+  --color-baixa-suave: hsl(var(--baixa-suave));
+  --color-ok: hsl(var(--ok));
+  --color-ok-suave: hsl(var(--ok-suave));
+
+  --color-confianca-alta: hsl(var(--confianca-alta));
+  --color-confianca-media: hsl(var(--confianca-media));
+
+  --color-background: hsl(var(--fundo));
+  --color-foreground: hsl(var(--texto));
+  --color-card: hsl(var(--superficie));
+  --color-card-foreground: hsl(var(--texto));
+  --color-popover: hsl(var(--superficie));
+  --color-popover-foreground: hsl(var(--texto));
+  --color-primary: hsl(var(--marca));
+  --color-primary-foreground: hsl(var(--marca-contraste));
+  --color-secondary: hsl(var(--superficie-alta));
+  --color-secondary-foreground: hsl(var(--texto));
+  --color-muted: hsl(var(--superficie-alta));
+  --color-muted-foreground: hsl(var(--texto-suave));
+  --color-accent: hsl(var(--superficie-alta));
+  --color-accent-foreground: hsl(var(--texto));
+  --color-destructive: hsl(var(--alta));
+  --color-destructive-foreground: hsl(var(--marca-contraste));
+  --color-border: hsl(var(--borda));
+  --color-input: hsl(var(--borda));
+  --color-ring: hsl(var(--marca));
+  --color-ring-offset-background: hsl(var(--fundo));
+
+  --spacing-grupo: 0.5rem;
+  --spacing-bloco: 1.5rem;
+  --spacing-secao: 2.5rem;
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--borda));
+  }
+
+  body {
+    background-color: hsl(var(--fundo));
+    color: hsl(var(--texto));
+  }
+}
+
+/* Números de indicador e de contagem alinham por coluna. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Container central do painel. */
+.painel-container {
+  width: 100%;
+  min-width: 0;
+  max-width: var(--largura-painel);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .painel-container {
+    padding-inline: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .painel-container {
+    padding-inline: 2rem;
+  }
+}
+
+/* Área principal: duas colunas a partir de 900px, 3fr / 2fr. */
+.painel-principal {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.painel-principal > * {
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .painel-principal {
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+  }
+}
+
+/* Faixa de indicadores: a quebra vem do ponto em que o card deixa de caber. */
+.faixa-indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  /* Espaço entre cards = dobro do espaço interno (8px). */
+  gap: 1rem;
+}
+
+.linhas-duas {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

@@ -38,10 +38,12 @@ mais de 15 segundos, corte texto — não acelere a fala.
 > A Central resolve isso com duas APIs.
 >
 > O **Notion** faz dois papéis. É o banco no-code — três bases relacionadas:
-> alunos, playbook e alertas. E é o canal de notificação: o campo Responsável é
-> do tipo pessoa, e atribuir alguém dispara a notificação nativa. Escolhi Notion
-> em vez de Airtable por isso e porque a coordenação já trabalha lá. Regra que
-> vive onde a pessoa já escreve é regra que ela mantém.
+> alunos, playbook e alertas. E é a fila de trabalho: cada alerta tem
+> responsável, severidade e prazo.
+>
+> Escolhi Notion em vez de Airtable porque a coordenação já trabalha lá. Regra
+> que vive onde a pessoa já escreve é regra que ela mantém — e isso eu demonstro
+> daqui a pouco, editando a regra e vendo o comportamento mudar.
 >
 > O **Gemini** entra só para redigir. E aqui está a decisão de arquitetura do
 > projeto: **o modelo não decide nada.**
@@ -107,14 +109,15 @@ Voltar ao painel, recarregar o perfil 1002.
 > gerada pelo modelo. Se as duas divergirem, está escrito no alerta que a conta
 > prevalece.
 >
-> E o responsável está atribuído — o Notion notifica sozinho. Não escrevi
-> integração de e-mail nenhuma.
+> E cada alerta já sai com responsável, severidade e prazo. Não escrevi
+> integração de e-mail nenhuma: o trabalho aparece na fila da coordenação, no
+> Notion, que é onde ela já está.
 
 ---
 
 ## Bloco 4 — Desafios (3:00 – 3:30)
 
-**Tela:** o terminal com `npm run testar`, 13 de 13.
+**Tela:** o terminal com `npm run testar`, 16 de 16.
 
 Escolha **dois dos três** abaixo e diga o que aprendeu, não que foi difícil.
 O terceiro é o mais forte se você tiver tempo de mostrar o log na tela.
@@ -126,11 +129,19 @@ O terceiro é o mais forte se você tiver tempo de mostrar o log na tela.
 > menos no limítrofe — que é o único que importa. Escrevi um teste específico
 > para ele.
 >
-> O segundo foi de governança. O escopo de integração do Notion **falha aberto**:
-> basta alguém compartilhar uma página nova com a mesma integração para o token
-> alcançar mais coisa, sem aviso. Não dá para resolver em código. Documentei o
-> limite na própria página raiz, em vez de afirmar um isolamento que a
-> ferramenta não sustenta.
+> O segundo foi de governança, e começou como um bug bobo: os alertas não
+> notificavam ninguém. Minha primeira hipótese foi que o Notion não notifica
+> ações de integração. Errada.
+>
+> A causa apareceu ao olhar quem o Notion registrou como autor: **eu**, não um
+> bot. O token que eu estava usando não era de uma integração — era um Personal
+> Access Token, que age como o próprio usuário e carrega o acesso dele ao
+> workspace inteiro.
+>
+> Ou seja: eu tinha escrito no documento que o escopo era "por página
+> compartilhada", e o escopo real era a minha conta. Corrigi o documento, porque
+> afirmação errada sobre escopo de credencial é pior que credencial larga —
+> credencial larga você conserta, afirmação errada faz o próximo confiar.
 
 **Terceiro, opcional** — tela: o log com `finishReason: MAX_TOKENS`.
 
