@@ -241,6 +241,8 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 | `npm run seed` | os dois acima, na ordem |
 | `npm run varredura:secar` | roda a avaliação e imprime, **sem** gravar e sem chamar o Gemini |
 | `npm run varredura` | a automação completa |
+| `npm run testar:consultas` | camada de dados do painel contra o Notion real |
+| `npm run testar:tudo` | as duas baterias, incluindo as rotas do Gemini |
 
 `--secar` existe em ambos os scripts de carga porque a alternativa é descobrir
 um erro de mapeamento depois de gravar 40 páginas no Notion.
@@ -289,12 +291,14 @@ scripts/
   gerar_alunos.mjs          40 perfis sintéticos -> Notion
   semear_playbook.mjs       regras/*.md -> Notion
   varredura.mjs             A AUTOMAÇÃO
-  regras.test.mjs           13 testes, sem rede
+  regras.test.mjs           16 testes, sem rede
+  testar_consultas.mjs      fumaça contra o Notion real
 supabase/
   functions/
     _shared/notion.mjs      cliente REST, compartilhado Node e Deno
     _shared/regras.mjs      o motor de regras
-    painel/index.ts         API autenticada do painel
+    _shared/consultas.mjs   camada de dados do painel
+    painel/index.ts         autenticacao, roteamento e auditoria
   migrations/               perfis, auditoria, gatilho de perfil
 docs/
   TOKENS.css                tema em variáveis CSS
