@@ -4,13 +4,16 @@ Cole o bloco abaixo **inteiro, de uma vez**, no Lovable.
 
 ## Antes de colar, leia isto
 
-Este prompt junta **duas coisas**:
+Este prompt junta **três coisas**:
 
 1. **Parte A** — correções que já foram aplicadas na cópia local do código
    (`Code/`), mas que **o Lovable ainda não tem**. Sem elas, o projeto no
    Lovable e o repositório divergem.
 2. **Parte B** — os achados da revisão cruzada de interface, cobrindo
    acessibilidade, layout, escrita, tipografia, cor e polimento.
+3. **Parte C** — a passada de amplitude visual, que responde à queixa de que a
+   interface está "crua". Ela não adiciona nenhuma cor, fonte ou token novo:
+   o ganho vem de usar diferencialmente o que o sistema já tem.
 
 Os achados estão ordenados por impacto. Os dois primeiros são sistêmicos e de
 alta alavancagem: consertam um token ou um padrão repetido, não um componente
@@ -248,6 +251,111 @@ No macOS o texto renderiza mais pesado que o pretendido. Adicione a classe
 `antialiased` ao <body> em src/routes/__root.tsx. Uma vez na raiz cobre tudo.
 
 
+
+
+═══════════════════════════════════════════════════════════════════
+PARTE C — amplitude visual (impeccable bolder)
+═══════════════════════════════════════════════════════════════════
+
+DIAGNÓSTICO, medido no código: 47 dos 51 usos de tamanho de texto estão em
+text-sm ou text-xs. Só 2 usos passam de 16px. Existe UM tratamento de
+superfície para os cinco papéis de container. Só dois pesos de fonte, ambos na
+faixa alta.
+
+O painel não tem amplitude. Sem contraste de tamanho, de peso ou de superfície,
+nada pode ser mais importante que outra coisa — e a tela lê como dado
+renderizado em vez de informação organizada.
+
+REGRA DESTA PARTE: não adicione NENHUMA cor, fonte, raio, sombra ou token novo.
+O sistema já tem três níveis de superfície e um tamanho de display; ele só não
+os usa diferencialmente. Se todo elemento ficar mais alto, a tela fica mais
+plana. O ganho vem de aquietar o secundário, não de aumentar tudo.
+
+C1. A FAIXA DE INDICADORES TEM UM PRIMÁRIO
+
+Hoje são seis caixas idênticas. Seis números com o mesmo peso significa que
+nenhum é o principal — "2 alertas de severidade alta", que é a única coisa
+acionável ali, tem o mesmo volume que "18 sem turma".
+
+- Tire a borda e o fundo de card dos SEIS. Eles passam a viver direto sobre o
+  fundo da página, separados só por espaço. Isso tira seis retângulos da tela
+  e faz a coluna de alertas virar o centro visual.
+- "Alertas de severidade alta" ocupa DUAS colunas da grade (grid-column: span 2)
+  e mantém o número em text-2xl.
+- Os outros cinco baixam o número para text-lg.
+- Mantenha o rótulo em text-xs / --texto-suave em todos.
+
+O pico vem do contraste, não de um tamanho novo: nada aumenta, cinco diminuem.
+
+C2. O CARD DE ALERTA RESPONDE "POR QUÊ" SEM CLIQUE
+
+Hoje o card mostra título, chips, duas linhas de prosa cinza e um botão. A conta
+determinística — que é a tese do produto — está atrás de um clique, e a leitura
+gerada, que é a parte que o próprio alerta diz ser secundária, é o que aparece.
+A hierarquia está invertida.
+
+Extraia a ÚLTIMA linha do campo `conta` (o veredito, ex.: "Reprovado por um
+único critério (Mentorias de Pilares) — os pisos são independentes e não se
+compensam entre si.") e mostre-a no card fechado, logo abaixo dos chips:
+
+- Fonte monoespaçada, text-xs, cor --texto.
+- Sobre um bloco com fundo --superficie-alta, padding 8px, raio sm.
+- Uma linha só. Se estourar, deixe quebrar — não trunque.
+
+A leitura gerada desce para baixo dela, em text-xs e --texto-suave, ainda
+limitada a duas linhas.
+
+O botão passa a dizer "Ver a conta completa" / "Ocultar a conta completa", e
+revela o bloco monoespaçado inteiro como já faz hoje.
+
+Não jogue a conta inteira no card fechado: sete cards de monoespaçado viram uma
+parede e destroem a escaneabilidade, que num painel operacional vem antes de
+expressão.
+
+C3. PESO É HIERARQUIA, E HOJE NÃO É USADA
+
+Não existe nenhum font-normal nos componentes: tudo é font-medium (500) ou
+font-semibold (600). Com tudo em peso alto, o peso deixa de significar algo.
+
+Baixe para peso normal (400) todo texto que NÃO é título nem valor:
+- a leitura gerada no card de alerta
+- os rótulos da faixa de indicadores
+- os rótulos de campo do detalhe do aluno
+- o texto de detalhe dos estados vazios
+- a turma na linha do aluno
+
+Mantenha 500 nos nomes e títulos de card, e 600 nos títulos de seção e nos
+números de indicador.
+
+C4. TRÊS NÍVEIS DE SUPERFÍCIE, USADOS COMO TRÊS
+
+O sistema tem --fundo, --superficie e --superficie-alta, e hoje quase tudo é
+--superficie com borda. Passe a usar:
+
+- --fundo: a página e, agora, a faixa de indicadores.
+- --superficie com borda: só os cards que agrupam um caso — alerta, linha de
+  aluno, cartão de resposta, estados vazios.
+- --superficie-alta sem borda: os blocos embutidos — a conta, o trilho da barra
+  de presença, o veredito do C2.
+
+Um card dentro de um card nunca repete a borda: o de dentro usa
+--superficie-alta e nenhuma borda.
+
+C5. RESPIRO ENTRE SEÇÕES
+
+O espaço entre seções principais é --spacing-secao (40px), e a página já usa
+gap-secao. Confirme que ele está de fato aplicado entre a faixa de indicadores,
+a área principal e a seção de pergunta — e não substituído por gap-bloco em
+algum ponto. Três blocos densos separados por 24px leem como um bloco só.
+
+VERIFICAÇÃO DA PARTE C — o teste do esqueleto
+
+Tire mentalmente todo o texto da tela e olhe só a estrutura. Você ainda
+consegue dizer que é um painel de triagem, e onde está o urgente? Se a resposta
+depende de ler as palavras, a hierarquia está no conteúdo e não no desenho, e a
+Parte C não foi cumprida.
+
+
 ═══════════════════════════════════════════════════════════════════
 VERIFICAÇÃO — faça antes de dizer que terminou
 ═══════════════════════════════════════════════════════════════════
@@ -261,14 +369,20 @@ VERIFICAÇÃO — faça antes de dizer que terminou
 5. Estados vazios: force a busca por um termo inexistente e confirme que o botão
    "Limpar a busca" aparece e funciona.
 6. O erro de login precisa aparecer em português.
+7. Faixa de indicadores: um número tem que saltar. Se os seis parecerem iguais,
+   o C1 não foi cumprido.
+8. Card de alerta fechado: o veredito monoespaçado tem que estar visível sem
+   clique, e a leitura gerada abaixo dele, menor e mais clara.
 ```
 
 ---
 
 ━━━ CORTE OPCIONAL ━━━
 
-Se dividir em dois prompts, mande **Parte A + B1 + B2** primeiro. São as
-correções sistêmicas. O resto pode ir depois sem risco de conflito.
+Se dividir, mande **Parte A + B1 + B2** primeiro — são as correções
+sistêmicas e as de acessibilidade e contraste. **Parte B3–B10** depois.
+**Parte C por último e sozinha**: ela mexe em hierarquia visual, e você vai
+querer olhar o resultado antes de empilhar outra coisa em cima.
 
 ---
 
