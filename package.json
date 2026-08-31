@@ -14,12 +14,14 @@
     "testar:consultas": "node scripts/testar_consultas.mjs",
     "testar:tudo": "npm run testar && node scripts/testar_consultas.mjs --com-gemini",
     "prints": "node scripts/prints.mjs",
-    "verificar:novos": "node scripts/verificar_novos.mjs"
+    "verificar:novos": "node scripts/verificar_novos.mjs",
+    "pdf": "node scripts/pdf.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
-    "playwright": "^1.62.0"
+    "playwright": "^1.62.0",
+    "marked": "^18.0.7"
   }
 }

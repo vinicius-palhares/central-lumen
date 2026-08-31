@@ -359,6 +359,7 @@ cp .env.example .env # preencher NOTION_TOKEN, GEMINI_API_KEY, ...
 | `npm run varredura:secar` | roda a avaliação e imprime, **sem** gravar e sem chamar o Gemini |
 | `npm run varredura` | a automação completa |
 | `npm run prints` | regera as capturas de `docs/prints/`, sem usar senha |
+| `npm run pdf` | regera `docs/DOCUMENTO_TEORICO.pdf` a partir do markdown |
 | `npm run verificar:novos` | confere os dois ramos da marcação de novos na interface publicada |
 | `npm run testar:consultas` | camada de dados do painel contra o Notion real |
 | `npm run testar:tudo` | as duas baterias, incluindo as rotas do Gemini |
@@ -446,6 +447,7 @@ docs/
   PROMPT_REVISAO_INTERFACE.md  as correções de interface, com a justificativa
   prompt-lovable.txt        extrato do anterior, pronto para colar
   DOCUMENTO_TEORICO.md      documento da disciplina
+  DOCUMENTO_TEORICO.pdf     o mesmo, em PDF, gerado por npm run pdf
   ROTEIRO_VIDEO.md          roteiro do pitch de 4 minutos
 ```
 

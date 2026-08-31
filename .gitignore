@@ -11,3 +11,8 @@ dist/
 
 # Saída local de depuração da varredura.
 varredura-*.json
+
+# Intermediarios de inspecao do PDF.
+*.local.html
+*.local.png
+*.local.mjs
