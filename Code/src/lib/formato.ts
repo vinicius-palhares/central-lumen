@@ -52,3 +52,36 @@ export function classeConfianca(confianca: string | null | undefined) {
   if (confianca === "Média") return "bg-superficie-alta text-confianca-media";
   return "bg-superficie-alta text-texto-fraco";
 }
+
+/**
+ * Traduz o erro do Supabase Auth para uma instrução em português.
+ *
+ * O cliente do Supabase devolve mensagens em inglês ("Invalid login
+ * credentials"). Repassá-las cruas numa interface em português falha duas
+ * vezes: o texto está no idioma errado, e ele descreve o problema sem dizer o
+ * que fazer. Um erro de interface é uma instrução.
+ *
+ * O que não estiver mapeado cai num texto genérico com um próximo passo, nunca
+ * na mensagem original — que pode citar detalhe interno do provedor.
+ */
+export function erroDeLogin(mensagem: string): string {
+  const m = mensagem.toLowerCase();
+
+  if (m.includes("invalid login credentials")) {
+    return "E-mail ou senha incorretos. Confira os dois e tente de novo.";
+  }
+  if (m.includes("email not confirmed")) {
+    return "Este e-mail ainda não foi confirmado. Peça a confirmação à coordenação.";
+  }
+  if (m.includes("too many requests") || m.includes("rate limit")) {
+    return "Tentativas demais em pouco tempo. Espere um minuto e tente de novo.";
+  }
+  if (m.includes("network") || m.includes("fetch")) {
+    return "Não foi possível conectar. Verifique sua conexão e tente de novo.";
+  }
+  if (m.includes("user not found")) {
+    // Não confirmar se o e-mail existe: a mesma resposta de credencial inválida.
+    return "E-mail ou senha incorretos. Confira os dois e tente de novo.";
+  }
+  return "Não foi possível entrar. Tente de novo em alguns instantes.";
+}

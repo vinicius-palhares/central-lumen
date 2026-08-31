@@ -17,7 +17,7 @@ function CardAlerta({ alerta }: { alerta: Alerta }) {
 
   return (
     <Cartao
-      className="flex min-w-0 flex-col gap-3 p-4"
+      className="flex min-w-0 flex-col gap-grupo p-4"
       style={{
         borderInlineStartWidth: 3,
         borderInlineStartColor: corDaSeveridade(alerta.severidade),
@@ -49,7 +49,7 @@ function CardAlerta({ alerta }: { alerta: Alerta }) {
         aria-expanded={aberto}
         className="inline-flex w-fit items-center gap-1.5 rounded-md border border-borda bg-superficie-alta px-3 py-1.5 text-xs font-medium text-texto transition-colors hover:bg-superficie"
       >
-        Ver a conta
+        {aberto ? "Ocultar a conta" : "Ver a conta"}
         <ChevronDown
           className={cn("size-4 transition-transform", aberto && "rotate-180")}
           aria-hidden="true"
@@ -69,13 +69,13 @@ function CardAlerta({ alerta }: { alerta: Alerta }) {
               href={alerta.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-3 inline-flex w-fit items-center gap-1.5 text-xs font-medium text-marca hover:underline"
+              className="inline-flex w-fit items-center gap-1.5 text-xs font-medium text-marca hover:underline"
             >
               Abrir no Notion
               <ExternalLink className="size-3.5" aria-hidden="true" />
             </a>
           ) : (
-            <span className="mt-3 text-xs text-texto-fraco">Sem link no Notion</span>
+            <span className="text-xs text-texto-fraco">Sem link no Notion</span>
           )}
         </>
       ) : null}
@@ -119,7 +119,10 @@ export function ListaAlertas({
       ) : erro ? (
         <ListaComErro mensagem={erro} aoTentarDeNovo={aoTentarDeNovo} />
       ) : itens.length === 0 ? (
-        <ListaVazia mensagem="Nenhum alerta aberto." />
+        <ListaVazia
+          mensagem="Nenhum alerta aberto"
+          detalhe="A varredura roda de segunda a sexta e abre um alerta sempre que encontra um caso que exige ação da coordenação."
+        />
       ) : (
         <div className="flex flex-col gap-4">
           {/* Já vem ordenado por severidade: a ordem da API é preservada. */}

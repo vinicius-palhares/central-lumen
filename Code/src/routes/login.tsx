@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/lib/supabase";
+import { erroDeLogin } from "@/lib/formato";
 
 export const Route = createFileRoute("/login")({
   ssr: false,
@@ -9,8 +10,7 @@ export const Route = createFileRoute("/login")({
       { title: "Entrar — Central Lumen" },
       {
         name: "description",
-        content:
-          "Acesso da coordenação ao painel de monitoramento operacional Central Lumen.",
+        content: "Acesso da coordenação ao painel de monitoramento operacional Central Lumen.",
       },
       { property: "og:title", content: "Entrar — Central Lumen" },
       {
@@ -49,9 +49,9 @@ function Login() {
     const { error } = await supabase.auth.signInWithPassword({ email, password: senha });
     setEnviando(false);
     if (error) {
-      // Mensagem do Supabase, tal como veio. Não há fluxo de cadastro:
-      // as contas são criadas pela coordenação.
-      setErro(error.message);
+      // A mensagem do Supabase vem em inglês e descreve o problema sem dizer o
+      // que fazer. Traduzida para uma instrução — ver erroDeLogin.
+      setErro(erroDeLogin(error.message));
       return;
     }
     navigate({ to: "/", replace: true });

@@ -9,11 +9,11 @@ export function PerfilBloqueado({ aoSair }: { aoSair: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-fundo">
       <div className="painel-container max-w-md py-secao text-center">
         <ShieldAlert className="mx-auto size-8 text-media" aria-hidden="true" />
-        <h1 className="mt-bloco text-lg font-semibold text-texto">
-          Perfil ainda não liberado pela coordenação.
-        </h1>
-        <p className="mt-2 text-sm text-texto-suave">
-          Sua conta existe, mas o acesso ao painel depende da liberação da coordenação.
+        {/* Título é rótulo, não frase: sem ponto final, e sem repetir o corpo. */}
+        <h1 className="mt-bloco text-lg font-semibold text-texto">Acesso ainda não liberado</h1>
+        <p className="mt-grupo text-sm text-texto-suave">
+          Sua conta existe e a senha está correta. Falta a coordenação liberar o acesso ao painel.
+          Procure quem administra a Central para pedir a liberação.
         </p>
         <button
           type="button"

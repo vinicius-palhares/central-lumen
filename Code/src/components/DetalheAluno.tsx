@@ -169,7 +169,7 @@ function Conteudo({
       <div className="flex flex-col gap-grupo">
         <Rotulo rotulo="ID" valor={aluno ? texto(aluno.alunoId) : TRACO} />
         <Rotulo rotulo="Formação" valor={texto(aluno?.formacao)} />
-        <Rotulo rotulo="Turma" valor={aluno?.turma ? aluno.turma : "sem turma"} />
+        <Rotulo rotulo="Turma" valor={aluno?.turma ? aluno.turma : "Sem turma"} />
         <Rotulo rotulo="Jornada" valor={texto(aluno?.jornada)} />
         <Rotulo rotulo="E-mail" valor={texto(aluno?.email)} />
       </div>
