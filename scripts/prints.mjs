@@ -33,7 +33,7 @@ const APENAS = i > -1 ? process.argv[i + 1].split(',').map((s) => s.trim()) : nu
 
 await carregarEnv()
 const env = exigir('SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'PRINTS_EMAIL')
-const APP = process.env.APP_URL ?? 'https://lumen-school-pulse.lovable.app'
+const APP = process.env.APP_URL ?? 'https://centralumen.lovable.app'
 
 await mkdir(DESTINO, { recursive: true })
 

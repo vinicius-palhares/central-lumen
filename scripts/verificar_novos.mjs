@@ -19,7 +19,7 @@ import { carregarEnv, exigir } from './config.mjs'
 
 await carregarEnv()
 const env = exigir('SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY', 'PRINTS_EMAIL')
-const APP = process.env.APP_URL ?? 'https://lumen-school-pulse.lovable.app'
+const APP = process.env.APP_URL ?? 'https://centralumen.lovable.app'
 
 // Mesma via sem senha do script de capturas.
 const g = await fetch(`${env.SUPABASE_URL}/auth/v1/admin/generate_link`, {

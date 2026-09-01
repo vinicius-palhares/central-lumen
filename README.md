@@ -6,7 +6,7 @@ instituição sobre os dados e abrir alertas acionáveis automaticamente.
 
 Trabalho da disciplina de Integração de APIs — UniFECAF.
 
-**Aplicação:** https://lumen-school-pulse.lovable.app — o acesso exige login,
+**Aplicação:** https://centralumen.lovable.app — o acesso exige login,
 ver [Como acessar](#como-acessar).
 
 > Projeto acadêmico. O **Instituto Lumen** é uma instituição fictícia. Os 40
@@ -355,7 +355,7 @@ nome do aluno.
 
 ## Como acessar
 
-**Aplicação:** https://lumen-school-pulse.lovable.app
+**Aplicação:** https://centralumen.lovable.app
 
 O painel exige login, e **não há cadastro aberto**. Isso é decisão de desenho,
 não obstáculo: autenticação e autorização são camadas separadas, e uma conta
